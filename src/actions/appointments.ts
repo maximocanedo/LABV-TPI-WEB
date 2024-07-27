@@ -1,7 +1,17 @@
 'use strict';
-import * as u from '../auth.ts';
-import { GenericQuery } from './commons.ts';
-import * as db from './../store/appointment.js';
+import * as u from '../auth';
+import { GenericQuery } from './commons';
+import {
+    AppointmentBasicProps,
+    AppointmentCommunicationView,
+    AppointmentMinimalView,
+    AppointmentRegistrationRequest, AppointmentStatus,
+    IAppointment
+} from "../entity/appointments";
+import {IdentifiableDoctor} from "../entity/doctors";
+import {IdentifiablePatient} from "../entity/patients";
+import App from "../App";
+//import * as db from './../store/appointment.';
 /// <reference path="../types/entities.js" />
 
 /**
@@ -9,10 +19,10 @@ import * as db from './../store/appointment.js';
  * @param {AppointmentRegistrationRequest} data Datos del turno.
  * @returns {Promise<IAppointment>} Turno creado.
  */
-export const create = async (data) => {
+export const create = async (data: AppointmentRegistrationRequest): Promise<AppointmentCommunicationView> => {
     return u.post("appointments", data)
         .then(response => response.json())
-        .then(created => db.update(created))
+        //.then(created => db.update(created))
         .catch(err => {
             throw err;
         });
@@ -22,10 +32,10 @@ export const create = async (data) => {
  * @param {number} id Id del turno.
  * @returns {Promise<IAppointment>}
  */
-export const findById = async (id) => {
+export const findById = async (id: number): Promise<IAppointment> => {
     return u.get(`appointments/id/${id}`)
         .then(response => response.json())
-        .then(result => db.update(result))
+        //.then(result => db.update(result))
         .catch(err => {
             throw err;
         });
@@ -35,68 +45,61 @@ export const findById = async (id) => {
  * @class
  * @extends GenericQuery<Appointment>
  */
-export class Query extends GenericQuery {
-    /** @type {AppointmentStatus} */
-    #appointmentStatus = null;
-    /** @type {Date | string} */
-    #date = null;
-    /** @type {Date | string} */
-    #limit = null;
-    /** @type {IdentifiableDoctor} */
-    #doctor = null;
-    /** @type {IdentifiablePatient} */
-    #patient = null;
+export class Query extends GenericQuery<AppointmentMinimalView> {
+    #appointmentStatus: AppointmentStatus | null = null;
+    #date: Date | string | null = null;
+    #limit: Date | string | null = null;
+    #doctor: IdentifiableDoctor | null = null;
+    #patient: IdentifiablePatient | null = null;
 
     constructor(q = "") {
         super(q);
-        super.setLocalDatabase(db);
+        //super.setLocalDatabase(db);
         super.setPrefix("appointments");
     }
 
-    filterByAppointmentStatus(/** @type {AppointmentStatus} */ status) {
+    filterByAppointmentStatus(status: AppointmentStatus | null) {
         this.#appointmentStatus = status;
         return this;
     }
 
-    filterByDate(/** @type {Date | string} */ date) {
+    filterByDate(date: Date | string | null) {
         this.#date = date;
         return this;
     }
 
-    setLimitDate(/** @type {Date | string} */ date) {
+    setLimitDate(date: Date | string | null) {
         this.#limit = date;
         return this;
     }
 
-    filterByDateBetween(/** @type {Date | string} */ start, /** @type {Date | string} */ finish) {
+    filterByDateBetween(start: Date | string | null, finish: Date | string | null) {
         return this.filterByDate(start).setLimitDate(finish);
     }
 
-    filterByDoctor(/** @type {IdentifiableDoctor} */ doctor) {
+    filterByDoctor(doctor: IdentifiableDoctor | null) {
         if(!doctor) {
             this.#doctor = null;
             return this;
         } else if(
-            (doctor.id == null || doctor.id == undefined || doctor.id < 1) &&
-            (doctor.file == null || doctor.file == undefined || doctor.file < 1)
+            (doctor.id == null || doctor.id < 1) && (doctor.file == null || doctor.file < 1)
         ) return this;
         this.#doctor = doctor;
         return this;
     }
 
-    filterByPatient(/** @type {IdentifiablePatient} */ patient) {
+    filterByPatient(patient: IdentifiablePatient) {
         if(!patient) {
             this.#patient = null;
             return this;
         } else if(
-            (patient.id == null || patient.id == undefined || patient.id < 1) &&
-            (patient.dni == null || patient.dni == undefined || patient.dni == "")
+            (patient.id == null || patient.id < 1) && (patient.dni == null || patient.dni == "")
         ) return this;
         this.#patient = patient;
         return this;
     }
 
-    getParams() {
+    getParams(): Record<string, any> {
         return {
             ...super.getParams(),
             appointmentStatus: this.#appointmentStatus,
@@ -121,10 +124,10 @@ export class Query extends GenericQuery {
  * @param {AppointmentBasicProperties} data Datos del turno.
  * @returns {Promise<IAppointment>}
  */
-export const update = async (id, data) => {
+export const update = async (id: number, data: AppointmentBasicProps): Promise<IAppointment> => {
     return u.patch(`appointments/id/${id}`, data)
         .then(response => response.json())
-        .then(result => db.update(result))
+        //.then(result => db.update(result))
         .catch(err => {
             throw err;
         });
@@ -135,7 +138,7 @@ export const update = async (id, data) => {
  * @param {number} id Id del turno.
  * @returns {Promise<boolean>}
  */
-export const disable = async (id) => {
+export const disable = async (id: number): Promise<boolean> => {
     return u.del(`appointments/id/${id}`)
         .then(response => response.ok)
         .catch(err => {
@@ -147,7 +150,7 @@ export const disable = async (id) => {
  * @param {number} id Id del turno.
  * @returns {Promise<boolean>}
  */
-export const enable = async (id) => {
+export const enable = async (id: number): Promise<boolean> => {
     return u.post(`appointments/id/${id}`)
         .then(response => response.ok)
         .catch(err => {
@@ -161,10 +164,10 @@ export const enable = async (id) => {
  * @param {Date} begin 
  * @returns {Promise<string[] | Date[]>}
  */
-export const getAvailableDates = async (doctorFile, begin) => {
+export const getAvailableDates = async (doctorFile: number, begin: Date): Promise<string[] | Date[]> => {
     return u.get(`doctors/file/${doctorFile}/datesAvailable`, { from: new Date(begin).toISOString().split("T")[0] })
         .then(response => response.json())
-        .then(x => x.map(d => (new Date(d).toLocaleDateString())))
+        .then(x => x.map((d: string | number | Date) => (new Date(d).toLocaleDateString())))
         .catch(console.error);
 };
 
@@ -174,9 +177,9 @@ export const getAvailableDates = async (doctorFile, begin) => {
  * @param {Date} date 
  * @returns {Promise<string[]>}
  */
-export const getAvailableSchedules = async (doctorFile, date) => {
+export const getAvailableSchedules = async (doctorFile: number, date: Date): Promise<string[]> => {
     return u.get(`doctors/file/${doctorFile}/schedules`, {"for": new Date(date).toISOString().split("T")[0]})
         .then(response => response.json())
-        .then(schedule => schedule.map(z => z.map(zz => ('0' + zz).slice(-2)).join(":")))
+        .then(schedule => schedule.map((z: string[]) => z.map((zz: string) => ('0' + zz).slice(-2)).join(":")))
         .catch(console.error);
 };

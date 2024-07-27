@@ -7,8 +7,8 @@ import {Identifiable} from "../entity/commons";
 
 /**
  * Crea un nuevo doctor.
- * @param {Object} data Datos del doctor a crear.
- * @returns {Promise<Object>} Promesa con la respuesta del servidor.
+ * @param data Datos del doctor a crear.
+ * @returns Promesa con la respuesta del servidor.
  */
 export const create = async (data: DoctorUpdateRequest): Promise<Doctor> => {
     return u.post("doctors", data)
@@ -21,8 +21,8 @@ export const create = async (data: DoctorUpdateRequest): Promise<Doctor> => {
 
 /**
  * Busca un doctor por su ID.
- * @param {number} id ID del doctor a buscar.
- * @returns {Promise<Object>} Promesa con los datos del doctor encontrado.
+ * @param id ID del doctor a buscar.
+ * @returns Promesa con los datos del doctor encontrado.
  */
 export const findById = async (id: number): Promise<IDoctor> => {
     return u.get(`doctors/id/${id}`)
@@ -35,8 +35,8 @@ export const findById = async (id: number): Promise<IDoctor> => {
 
 /**
  * Busca un doctor por su legajo.
- * @param {number} file Legajo del doctor a buscar.
- * @returns {Promise<Object>} Promesa con los datos del doctor encontrado.
+ * @param file Legajo del doctor a buscar.
+ * @returns Promesa con los datos del doctor encontrado.
  */
 export const findByFile = async (file: number): Promise<IDoctor> => {
     return u.get(`doctors/file/${file}`)
@@ -61,9 +61,9 @@ export const existsById = async (id: number): Promise<boolean> =>
 
 /**
  * Actualiza los datos de un doctor.
- * @param {number} id ID del doctor a actualizar.
- * @param {Object} data Nuevos datos del doctor.
- * @returns {Promise<IDoctor>} Promesa con los datos actualizados del doctor.
+ * @param id ID del doctor a actualizar.
+ * @param data Nuevos datos del doctor.
+ * @returns Promesa con los datos actualizados del doctor.
  */
 export const update = async (id: number, data: DoctorUpdateRequest): Promise<Doctor> => {
     return u.patch(`doctors/id/${id}`, data)
@@ -75,9 +75,8 @@ export const update = async (id: number, data: DoctorUpdateRequest): Promise<Doc
 };
 
 /**
- * @param {number} scheduleId 
- * @param {number} doctorFile 
- * @returns {Promise<Schedule[]>}
+ * @param scheduleId
+ * @param doctorFile
  */
 export const deleteSchedule = async (scheduleId: number, doctorFile: number): Promise<Schedule[]> => {
     return u.del(`doctors/file/${doctorFile}/schedules/${scheduleId}`)
