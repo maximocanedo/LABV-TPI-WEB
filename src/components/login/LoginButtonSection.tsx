@@ -5,6 +5,7 @@ import {CurrentUser} from "../../App";
 import {LogoutButton} from "../buttons/LogoutButton";
 import {useNavigate} from "react-router";
 import {Skeleton} from "../ui/skeleton";
+import {LoginDialog} from "./LoginDialog";
 
 interface LoginButtonSectionProps {
     me: CurrentUser;
@@ -21,7 +22,7 @@ export const LoginButtonSection = ({ me, clearCurrentUser }: LoginButtonSectionP
         <div className="col-start-1"><Skeleton className={"h-4 w-36"} /></div>
     </div>);
     else if(me == null) return (<div className={"grid grid-cols-2 grid-rows-1 p-2 w-max gap-2"}>
-        <Button onClick={() => navigate('/login')}>Iniciar sesión</Button>
+        <LoginDialog />
         <Button onClick={() => navigate('/signup')} variant={"secondary"}>Crear cuenta</Button>
     </div>);
     else return (

@@ -7,15 +7,16 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Button } from "./components/ui/button";
 import {LoginButtonSection} from "./components/login/LoginButtonSection";
 import {Toaster} from "./components/ui/toaster";
+import {useToast} from "./components/ui/use-toast";
 
 export type CurrentUser = User | null | "loading";
 
 const App: React.FC = () => {
     const [me, setCurrentUser] = useState<CurrentUser>(null);
-
+    const { toast } = useToast();
     const loadCurrentUser = async () => {
         setCurrentUser("loading");
-        users.myself()
+        return users.myself()
             .then(setCurrentUser)
             .catch((err) => {
                 setCurrentUser(null);
@@ -24,6 +25,15 @@ const App: React.FC = () => {
     };
     useEffect(() => {
         loadCurrentUser();
+        document.body.addEventListener("user-logged", async (e) => {
+            await loadCurrentUser();
+            if(me != null && me != "loading") {
+                toast({
+                    title: "¡Hola de nuevo, " + me.name + "!",
+                    description: "¡Bienvenido!"
+                })
+            }
+        });
     }, []);
     const loginTest = async () => {
         setCurrentUser("loading");
@@ -36,7 +46,7 @@ const App: React.FC = () => {
         <Router>
             <div onLoad={() => loadCurrentUser()} className="App font-sans">
                 <LoginButtonSection {...{ me, clearCurrentUser: (): void => {setCurrentUser(null);} }} /><br/>
-                <Button onClick={loginTest}>Login</Button><br/><br/>
+                
             </div>
             <Routes>
                 <Route path={"/users/:username"} element={<div>Not implemented</div>} />
