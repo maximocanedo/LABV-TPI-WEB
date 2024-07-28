@@ -12,7 +12,7 @@ export interface UserBasicProps {
     access?: Permit[];
 }
 export interface UserFinalDoctorProp {
-    doctor: IDoctor | null;
+    doctor?: IDoctor | null;
 }
 export interface IUser extends IdentifiableUser, UserBasicProps, Deletable, Saveable {}
 export interface IUserMinimalView extends IUser {

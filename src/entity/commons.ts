@@ -1,7 +1,7 @@
 'use strict';
 
 export type Saveable = {
-    _lastOfflineSaved: Date;
+    _lastOfflineSaved?: Date;
 }
 export type Deletable = {
     active: boolean;

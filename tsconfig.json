@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "es2023",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -18,7 +18,6 @@
     // Add these Lines 👇
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
     }
   },
   "include": [
