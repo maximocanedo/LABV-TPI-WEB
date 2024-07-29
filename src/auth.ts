@@ -7,7 +7,7 @@ import {CommonException} from "./entity/commons";
  * Base de todas las URLs de las peticiones hechas con los métodos de este módulo.
  */
 export const BASE_URL = "http://localhost:81/TP4_GRUPO3/";
-
+export const WEB_PREFIX = "web";
 /**
  * Métodos HTTP.
  */
@@ -29,10 +29,19 @@ export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS'
  */
 export const resolveUrl = (relativeUrl: string): string => BASE_URL + relativeUrl;
 
+export const resolveLocalUrl = (relativeUrl: string): string => {
+    const normalizedRelativeUrl: string = relativeUrl.startsWith('/') ? relativeUrl : "/" + relativeUrl;
+    if(window.location.port === '' || window.location.port == '80') {
+        return normalizedRelativeUrl;
+    }
+    return `/${WEB_PREFIX}${normalizedRelativeUrl}`;
+};
+
 const resolveBody = (body: string | string[][] | Record<string, any>): string => {
     if(body == null || body == "") return "";
     return JSON.stringify(body);
 };
+
 
 export const resolveURLParams = (url: string, params?: string | URLSearchParams | string[][] | Record<string, string>): string => {
     const urlObj: URL = new URL(url, BASE_URL);
@@ -67,23 +76,25 @@ const req = async (url: string, method: HttpMethod, body: string | Record<string
             return response;
     };
 
+
+
     try {
         const accessToken: string = getAccessToken()?? "";
         const firstTry: Response = await makeRequest(accessToken);
         if (firstTry.status === 498) {
-            console.warn("Autenticando con token de refresco.");
+            console.debug("Autenticando con token de refresco.");
             const refreshToken: string = getRefreshToken()??"";
             return await makeRequest(refreshToken);
         }
         if (!firstTry.ok) {
-            const {error} = (await firstTry.json());
-            emitAPIException(error);
+            const err = (await firstTry.json());
+            emitAPIException(err.error);
         }
         return firstTry;
     } catch (error: any) {
         if(error.name == "TypeError" && error.message == 'Failed to fetch')
             emitConnectionFailure(url, method, body, error);
-        if(error.path !== undefined)
+        if('path' in error)
             emitAPIException(error);
         throw error; 
     }

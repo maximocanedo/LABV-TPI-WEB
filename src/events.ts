@@ -4,6 +4,20 @@
 import {HttpMethod} from "./auth";
 import {CommonException} from "./entity/commons";
 
+export class APIExceptionEvent extends CustomEvent<CommonException> {
+    static EVENT_NAME = "onAPIException";
+    constructor(err: CommonException) {
+        super(APIExceptionEvent.EVENT_NAME, { detail: { ...err } });
+    }
+}
+
+export class ConnectionFailureEvent extends CustomEvent<{url: string, method: HttpMethod, body: any, error: TypeError}> {
+    static EVENT_NAME: string = "onConnectionFailure";
+    constructor(url: string, method: HttpMethod, body: any, error: TypeError) {
+        super(ConnectionFailureEvent.EVENT_NAME, { detail: { url, method, body, error } });
+    }
+}
+
 /**
  * El evento onConnectionFailure se lanza cuando una solicitud HTTP no 
  * puede realizarse correctamente por problemas de conexión.
@@ -12,10 +26,9 @@ import {CommonException} from "./entity/commons";
  * @param {JSON} body Cuerpo de la solicitud.
  * @param {TypeError} error Excepción obtenida.
  */
-export const emitConnectionFailure = (url: string, method: HttpMethod, body: any, error: TypeError) => {
-    const event = new CustomEvent('onConnectionFailure', {
-        detail: { url, method, body, error }
-    });
+export const emitConnectionFailure = (url: string, method: HttpMethod, body: any, error: TypeError): void => {
+    const event: ConnectionFailureEvent = new ConnectionFailureEvent(url, method, body, error);
+    console.log(event);
     document.dispatchEvent(event);
 };
 
@@ -24,8 +37,7 @@ export const emitConnectionFailure = (url: string, method: HttpMethod, body: any
  * @param {CommonException} error Error devuelto por el servidor.
  */
 export const emitAPIException = (error: CommonException): void => {
-    const event: CustomEvent<CommonException> = new CustomEvent('onAPIException', {
-        detail: error
-    });
+    const event: APIExceptionEvent = new APIExceptionEvent(error);
+    console.log(event);
     document.dispatchEvent(event);
 };

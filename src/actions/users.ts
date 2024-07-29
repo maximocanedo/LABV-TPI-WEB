@@ -4,6 +4,7 @@ import { updateAccessToken,
      updateRefreshToken } from '../security';
 import { GenericQuery } from './commons';
 import {IUser, Permit, SignUpRequest, User} from "../entity/users";
+import {CommonException} from "../entity/commons";
 
 /**
  * Inicia sesión. 
@@ -136,22 +137,22 @@ export const enable = async (username: string): Promise<boolean> => {
     return response.ok;
 };
 
+
 /**
  * Devuelve la información del usuario actualmente autenticado.
  * @returns {Promise<User>} Usuario autenticado.
  */
 export const myself = async (): Promise<User> => {
+
+    let ok = false;
     return u.get("users/me")
-        .then(response => {
-            if(!response.ok) {
-                response.json().then(x => {
-                    throw x;
-                });
-                return null;
-            }
+        .then((response: Response) => {
+            ok = response.ok;
             return response.json();
-        })
-        .catch(err => {
+        }).then((json: User | CommonException | Error) => {
+            if(!ok || !('username' in json)) throw json;
+            return json;
+        }).catch(err => {
             throw err;
         });
 };

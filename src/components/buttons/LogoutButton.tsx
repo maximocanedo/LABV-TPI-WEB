@@ -11,21 +11,22 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "../ui/alert-dialog";
-import {Button, buttonVariants} from "../ui/button";
+import {Button, ButtonProps, buttonVariants} from "../ui/button";
 import * as users from "../../actions/users";
 import { useToast } from "../ui/use-toast";
+import React from "react";
+import {useCurrentUser} from "../users/CurrentUserContext";
 
 
-export interface LogoutButtonProps {
-    me: CurrentUser;
-    clearCurrentUser: () => void;
+export interface LogoutButtonProps extends ButtonProps, React.RefAttributes<HTMLButtonElement> {
 }
-export const LogoutButton = ({ me: user, clearCurrentUser }: LogoutButtonProps) => {
+export const LogoutButton = ({ className, ...props }: LogoutButtonProps) => {
 
     const { toast } = useToast();
-
+    const { me: user, setCurrentUser, loadCurrentUser } = useCurrentUser();
+    const clearCurrentUser = () => setCurrentUser(null);
     if(user == "loading" || user == null) {
-        return (<Button variant={"destructive"} disabled><s>Cerrar sesión</s></Button>);
+        return (<Button variant={"outline"} disabled><s>Cerrar sesión</s></Button>);
     }
 
     const logout = () => {
@@ -40,7 +41,7 @@ export const LogoutButton = ({ me: user, clearCurrentUser }: LogoutButtonProps) 
 
     return (
     <AlertDialog>
-        <AlertDialogTrigger className={buttonVariants({ variant: "destructive" })}>
+        <AlertDialogTrigger { ...props } className={className + " " + buttonVariants({ variant: "outline" })}>
             Cerrar sesión
         </AlertDialogTrigger>
         <AlertDialogContent>

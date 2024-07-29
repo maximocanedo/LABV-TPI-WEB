@@ -6,26 +6,49 @@ import {LogoutButton} from "../buttons/LogoutButton";
 import {useNavigate} from "react-router";
 import {Skeleton} from "../ui/skeleton";
 import {LoginDialog} from "./LoginDialog";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "../ui/card";
+import {useCurrentUser} from "../users/CurrentUserContext";
 
 interface LoginButtonSectionProps {
-    me: CurrentUser;
-    clearCurrentUser: () => void;
 }
 
-export const LoginButtonSection = ({ me, clearCurrentUser }: LoginButtonSectionProps) => {
+export const LoginButtonSection = ({ }: LoginButtonSectionProps) => {
+    const { me, setCurrentUser, loadCurrentUser } = useCurrentUser();
     const navigate = useNavigate();
-    if(me == "loading") return (<div className={"grid grid-cols-2 grid-rows-2 p-2 w-max gap-2"}>
-        <div className="col-start-1"><Skeleton className={"h-4 w-48"} /></div>
-        <div className="col-start-2 row-span-2 w-24 grid place-items-center">
-            <Skeleton className={"h-8 w-16"} />
-        </div>
-        <div className="col-start-1"><Skeleton className={"h-4 w-36"} /></div>
-    </div>);
-    else if(me == null) return (<div className={"grid grid-cols-2 grid-rows-1 p-2 w-max gap-2"}>
-        <LoginDialog />
-        <Button onClick={() => navigate('/signup')} variant={"secondary"}>Crear cuenta</Button>
-    </div>);
-    else return (
+    const cardClassList: string = "p-3 md:p-4";
+    const rootClassList: string = "p-1 md:p-0 ";
+    if(me == "loading") return (<Card x-chunk="dashboard-02-chunk-0" className={rootClassList}>
+        <CardHeader className={cardClassList}>
+            <CardTitle><Skeleton className={"h-4 w-full"} /></CardTitle>
+            <CardDescription><Skeleton className={"h-4 w-3/4"} /></CardDescription>
+        </CardHeader>
+    </Card>);
+    else if(me == null) return (<Card x-chunk="dashboard-02-chunk-0" className={rootClassList}>
+        <CardHeader className={cardClassList}>
+            <CardTitle>Autenticate</CardTitle>
+            <CardDescription>Ingresá para administrar los turnos. </CardDescription>
+        </CardHeader>
+        <CardContent className="p-2 pt-0 md:p-4 md:pt-0 grid gap-3">
+            <LoginDialog />
+            <Button onClick={() => navigate('/signup')} variant={"secondary"}>Crear cuenta</Button>
+        </CardContent>
+    </Card>);
+    else return (<Card x-chunk="dashboard-02-chunk-0" className={rootClassList}>
+            <CardHeader className={cardClassList}>
+                <CardTitle>{me.name}</CardTitle>
+                <CardDescription>
+                    {"@" + me.username}
+                </CardDescription>
+            </CardHeader>
+            <CardContent className="p-2 pt-0 md:p-4 md:pt-0">
+                { /** <Button size="sm" className="w-full">
+                 Upgrade
+                 </Button>*/}
+                <LogoutButton me={me} className={"w-full"} size={"sm"} clearCurrentUser={() =>setCurrentUser(null)} />
+            </CardContent>
+        </Card>);
+
+        /* return (
             <div className={"grid grid-cols-2 grid-rows-2 p-2 w-max"}>
                 <div className={"col-start-1 font-medium"}>{me.name}</div>
                 <div className={"col-start-2 row-span-2 grid place-items-center"}>
@@ -35,5 +58,5 @@ export const LoginButtonSection = ({ me, clearCurrentUser }: LoginButtonSectionP
                     <a href={"#"}>{"@" + me.username}</a>
                 </div>
             </div>
-        );
+        ); // */
 };
