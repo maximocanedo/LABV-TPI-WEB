@@ -16,6 +16,7 @@ import {
 import {LateralMenu} from "./components/page/commons/LateralMenu";
 import {MainUserPage} from "./components/page/users/MainUserPage";
 import {CurrentUserProvider, useCurrentUser} from "./components/users/CurrentUserContext";
+import {UserProfilePage} from "./components/page/users/UserProfilePage";
 
 export type CurrentUser = User | null | "loading";
 
@@ -72,14 +73,15 @@ const App: React.FC = () => {
                             <LateralMenu isInModal={false} />
                         </div>
                         <div className="mt-auto p-4">
-                            <LoginButtonSection me={me} clearCurrentUser={() => setCurrentUser(null)} />
+                            <LoginButtonSection />
                         </div>
                     </div>
                 </div>
                 <div className="flex flex-col">
                     <Routes>
                         <Route path={"/"} element={<></>}/>
-                        <Route path={"/users"} element={<MainUserPage {...{me, clearCurrentUser: () => setCurrentUser(null)}} />}/>
+                        <Route path={"/users"} element={<MainUserPage />}/>
+                        <Route path={"/users/:username"} element={<UserProfilePage />} />
                     </Routes>
                 </div>
             </div>

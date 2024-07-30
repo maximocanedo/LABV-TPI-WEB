@@ -15,22 +15,12 @@ import {
 import {BreadcrumbList} from "../../ui/breadcrumb";
 import {FilterStatus} from "../../../actions/commons";
 import {IUser} from "../../../entity/users";
-import {UserItem} from "../../users/UserItem";
 import {useCurrentUser} from "../../users/CurrentUserContext";
 import {StatusFilterControl} from "../../buttons/StatusFilterControl";
 import {UserCommandQuery} from "../../commands/UserCommandQuery";
 import {Button} from "../../ui/button";
 import {Tabs} from "../../ui/tabs";
 import {ViewMode, ViewModeControl} from "../../buttons/ViewModeControl";
-import {
-    TableBody,
-    TableCaption,
-    Table,
-    TableCell,
-    TableFooter, TableHead,
-    TableHeader,
-    TableRow
-} from "src/components/ui/table";
 import {UserListComponent} from "./UserListComponent";
 import {useNavigate} from "react-router";
 import {resolveLocalUrl} from "../../../auth";
@@ -107,8 +97,10 @@ export const MainUserPage = (props: MainUserPageProps) => {
         search();
     };
 
+
     useEffect(() => {
         search();
+        console.log(users.permitDocs);
 
     }, [status]);
 

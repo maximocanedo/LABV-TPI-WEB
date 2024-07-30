@@ -3,6 +3,8 @@ import { ChevronRightIcon, DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { Slot } from "@radix-ui/react-slot"
 
 import { cn } from "./lib/utils"
+import {useNavigate} from "react-router";
+import {resolveLocalUrl} from "../../auth";
 
 const Breadcrumb = React.forwardRef<
   HTMLElement,
@@ -44,12 +46,13 @@ const BreadcrumbLink = React.forwardRef<
   React.ComponentPropsWithoutRef<"a"> & {
     asChild?: boolean
   }
->(({ asChild, className, ...props }, ref) => {
+>(({ asChild, className, href, ...props }, ref) => {
   const Comp = asChild ? Slot : "a"
-
+  const navigate = useNavigate(); // WARNING TODO: No reutilizar este código a menos que se elimine esta línea de código y/o se use React Router DOM.
   return (
     <Comp
       ref={ref}
+      onClick={() => {navigate(resolveLocalUrl(href??"/"));}}
       className={cn("transition-colors hover:text-foreground", className)}
       {...props}
     />
