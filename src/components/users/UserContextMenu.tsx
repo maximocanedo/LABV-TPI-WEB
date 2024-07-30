@@ -17,6 +17,8 @@ import {
 import {ReactNode} from "react";
 import {IUser, Permit, Permits} from "../../entity/users";
 import {useCurrentUser} from "./CurrentUserContext";
+import {useToast} from "../ui/use-toast";
+import {resolveLocalUrl} from "../../auth";
 export interface UserContextMenuProps {
     children: ReactNode;
     user: IUser;
@@ -24,9 +26,18 @@ export interface UserContextMenuProps {
 export const UserContextMenu = ({children, user}: UserContextMenuProps) => {
 
     const { me } = useCurrentUser();
+    const { toast } = useToast();
     const can = (permit: Permit | string): boolean => (!!me && me != "loading") && (me.active && (me.username == user.username) || (me.access??[]).some(action => action == permit))
 
-
+    const copy = (str: string) => {
+        navigator.clipboard.writeText(str)
+            .then(() => {
+                toast({ title: `Copiado al portapapeles. ` });
+            })
+            .catch(err => {
+                toast({ title: `No se pudo copiar al portapapeles. ` });
+            });
+    };
 
     return (
         <ContextMenu>
@@ -43,10 +54,12 @@ export const UserContextMenu = ({children, user}: UserContextMenuProps) => {
                 <ContextMenuSub>
                     <ContextMenuSubTrigger inset>Copiar</ContextMenuSubTrigger>
                     <ContextMenuSubContent className="w-48">
-                        <ContextMenuItem>Enlace al perfil</ContextMenuItem>
+                        <ContextMenuItem onClick={() => {
+                            copy(resolveLocalUrl('/users/' + user.username))
+                        }}>Enlace al perfil</ContextMenuItem>
                         <ContextMenuSeparator />
-                        <ContextMenuItem>Nombre de usuario</ContextMenuItem>
-                        <ContextMenuItem>Nombre</ContextMenuItem>
+                        <ContextMenuItem onClick={() => copy(user.username)}>Nombre de usuario</ContextMenuItem>
+                        <ContextMenuItem onClick={() => copy(user.name)}>Nombre</ContextMenuItem>
                     </ContextMenuSubContent>
                 </ContextMenuSub>
             </ContextMenuContent>

@@ -79,6 +79,21 @@
   body {
     @apply bg-background text-foreground;
     font-family: "Inter", sans-serif;
+    max-height: 100vh;
+    overflow-y: hidden;
+  }
+  .root-main {
+    max-height: calc(100vh - 56px);
+    overflow-y: scroll;
+  }
+  .__command {
+    min-width: calc(100% - 10px);
+  }
+  .__command:not(.__showing) > div[cmdk-input-wrapper] {
+    border-bottom: 0px !important;
+  }
+  .--force-overflow-visible {
+    overflow: visible !important;
   }
 }
 

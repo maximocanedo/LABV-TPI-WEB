@@ -1,12 +1,10 @@
 'use strict';
 
 import {Header} from "../commons/Header";
-import {Search} from "lucide-react";
-import {Input} from "../../ui/input";
+import {Plus} from "lucide-react";
 import {PageContent} from "../commons/PageContent";
 import * as users from "../../../actions/users";
-import React, {useReducer, useState} from "react";
-import {CurrentUser} from "../../../App";
+import React, {useEffect, useReducer, useState} from "react";
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -17,9 +15,25 @@ import {
 import {BreadcrumbList} from "../../ui/breadcrumb";
 import {FilterStatus} from "../../../actions/commons";
 import {IUser} from "../../../entity/users";
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "../../ui/card";
 import {UserItem} from "../../users/UserItem";
 import {useCurrentUser} from "../../users/CurrentUserContext";
+import {StatusFilterControl} from "../../buttons/StatusFilterControl";
+import {UserCommandQuery} from "../../commands/UserCommandQuery";
+import {Button} from "../../ui/button";
+import {Tabs} from "../../ui/tabs";
+import {ViewMode, ViewModeControl} from "../../buttons/ViewModeControl";
+import {
+    TableBody,
+    TableCaption,
+    Table,
+    TableCell,
+    TableFooter, TableHead,
+    TableHeader,
+    TableRow
+} from "src/components/ui/table";
+import {UserListComponent} from "./UserListComponent";
+import {useNavigate} from "react-router";
+import {resolveLocalUrl} from "../../../auth";
 
 export interface MainUserPageProps {
 }
@@ -35,7 +49,7 @@ const resultsReducer = (state: IUser[], action: { type: resultAction, payload: I
     }
     switch(action.type) {
         case resultAction.ADD:
-            return [...state, action.payload];
+            return [...(state.filter(x => x.username !== (action.payload as IUser).username)), action.payload];
         case resultAction.REMOVE:
             return state.filter(x => x.username !== (action.payload as IUser).username);
         default:
@@ -45,10 +59,12 @@ const resultsReducer = (state: IUser[], action: { type: resultAction, payload: I
 
 export const MainUserPage = (props: MainUserPageProps) => {
     const { me, setCurrentUser, loadCurrentUser } = useCurrentUser();
-
+    const navigate = useNavigate();
     const [q, setQ] = useState<string>("");
+    const [viewMode, setViewMode] = useState<ViewMode>(ViewMode.COMFY);
     const [status, setStatus] = useState<FilterStatus>(FilterStatus.ONLY_ACTIVE);
     const [results, dispatch] = useReducer(resultsReducer, []);
+    const [loading, setLoadingState] = useState<boolean>(false);
 
     const add = (payload: IUser) => dispatch({ type: resultAction.ADD, payload });
     const rem = (payload: IUser) => dispatch({ type: resultAction.REMOVE, payload });
@@ -57,51 +73,80 @@ export const MainUserPage = (props: MainUserPageProps) => {
     const getQuery = (): users.Query => {
         return new users.Query(q).filterByStatus(status);
     };
-
-    const onSearch = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    const search = (obj = {filter: null}) => {
+        if(!obj || !obj.filter) {} else {
+            setStatus(obj.filter);
+            return;
+        }
         cls();
+        setLoadingState(true);
         getQuery().search()
             .then(res => {
                 res.map(add);
-            }).catch(console.error);
-        console.log({q, status});
+            })
+            .catch(console.error)
+            .finally(() => {
+                setLoadingState(false);
+            });
     };
+
+    const next = () => {
+        setLoadingState(true);
+        getQuery().next()
+            .then(res => {
+                res.map(add);
+            })
+            .catch(console.error)
+            .finally(() => {
+                setLoadingState(false);
+            });
+    };
+
+    const onSearch = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        search();
+    };
+
+    useEffect(() => {
+        search();
+
+    }, [status]);
 
     return (<>
         <Header>
             <div className="w-full flex-1">
-                <form action={"#"} onSubmit={onSearch}>
-                    <div className="relative">
-                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"/>
-                        <Input
-                            type="search"
-                            value={q}
-                            onChange={e => setQ(e.target.value)}
-                            placeholder="Buscar usuarios..."
-                            className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
-                        />
-                    </div>
-                </form>
+                <UserCommandQuery q={q} onChange={setQ} onSearch={search}  />
             </div>
         </Header>
-        <PageContent>
-            <Breadcrumb>
-                <BreadcrumbList>
-                    <BreadcrumbItem>
-                        <BreadcrumbLink href="/">Inicio</BreadcrumbLink>
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator />
-                    <BreadcrumbItem>
-                        <BreadcrumbPage>Usuarios</BreadcrumbPage>
-                    </BreadcrumbItem>
-                </BreadcrumbList>
-            </Breadcrumb>
-            <div className="grid grid-cols-3 grid-rows-5 gap-3" x-chunk="dashboard-02-chunk-1">
+            <PageContent>
+                <Breadcrumb>
+                    <BreadcrumbList>
+                        <BreadcrumbItem>
+                            <BreadcrumbLink href="/">Inicio</BreadcrumbLink>
+                        </BreadcrumbItem>
+                        <BreadcrumbSeparator/>
+                        <BreadcrumbItem>
+                            <BreadcrumbPage>Usuarios</BreadcrumbPage>
+                        </BreadcrumbItem>
+                    </BreadcrumbList>
+                </Breadcrumb>
+                <Tabs defaultValue="COMFY" className="w-[400px]">
+                    <div className="flex justify-start gap-2">
+                        <ViewModeControl onChange={setViewMode}/>
+                        <StatusFilterControl value={status} onChange={setStatus}/>
+                    </div>
+                </Tabs>
+                <div className={"overflow-visible --force-overflow-visible"}>
+                    <UserListComponent viewMode={viewMode} loading={loading} items={results} onClick={(user) => {
+                        navigate(resolveLocalUrl("/users/" + user.username));
+                    }} />
+                </div>
                 {
-                    results.map(result => <UserItem user={result} />)
+                    !loading && <div>
+                        <Button variant={"outline"} onClick={next}><Plus className={"mr-2"}/>Cargar más</Button>
+                    </div>
                 }
-            </div>
-        </PageContent>
-    </>)
+            </PageContent>
+        </>
+    )
 }
