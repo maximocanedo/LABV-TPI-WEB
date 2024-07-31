@@ -17,7 +17,7 @@ export interface PermissionItemProps {
 export const PermissionItem = ({user, action, label}: PermissionItemProps) => {
     const { me } = useCurrentUser();
     let canGrant: boolean = false;
-    if(!me || me == "loading") canGrant = false;
+    if(!me || me == "loading" || user.username == "root" || !user.active) canGrant = false;
     else canGrant = (me.access??[]).some(p => p === Permits.GRANT_PERMISSIONS);
     const [loading, setLoading] = useState<boolean>(false);
     const [checked, setChecked] = useState<boolean>((user.access??[]).some(x=>x===action));

@@ -20,6 +20,8 @@ import {
 import {Card, CardContent, CardHeader} from "../../ui/card";
 import {BasicInfoCard} from "./cards/BasicInfoCard";
 import {PermissionsCard} from "./cards/PermissionsCard";
+import {UpdateBasicInfoCard} from "./cards/UpdateBasicInfoCard";
+import {UserStateCard} from "./cards/UserStateCard";
 
 export interface UserProfilePageProps {
 
@@ -76,6 +78,8 @@ export const UserProfilePage = (props: UserProfilePageProps) => {
             <div className={"grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3 p-0 text-sm"}>
                 { !loading && !!user && <BasicInfoCard user={user} /> }
                 { !loading && !!user && <PermissionsCard user={user} /> }
+                { !loading && !!user && <UpdateBasicInfoCard user={user} onUpdate={(updated) => {setUser({...user, ...updated});}} /> }
+                { !loading && !!user && <UserStateCard user={user} onUpdate={(state: boolean) => {setUser({ ...user, active: state });}} /> }
             </div>
         </PageContent>
     </>);
