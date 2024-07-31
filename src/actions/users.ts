@@ -3,7 +3,7 @@ import * as u from '../auth';
 import { updateAccessToken,
      updateRefreshToken } from '../security';
 import { GenericQuery } from './commons';
-import {IUser, Permit, SignUpRequest, User} from "../entity/users";
+import {IUser, Permit, SignUpRequest, User, UserPermit} from "../entity/users";
 import {CommonException} from "../entity/commons";
 
 /**
@@ -201,7 +201,7 @@ export const disableMe = async (): Promise<boolean> => {
  * @param {Permit} permit Permiso a conceder
  * @returns {Promise<UserPermit>}
  */
-export const grantOne = async (username: string, permit: Permit) => {
+export const grantOne = async (username: string, permit: Permit): Promise<UserPermit> => {
     return u.post("users/u/" + username + "/grant/p/" + permit)
     .then(response => response.json())
     .then(json => {
@@ -219,7 +219,7 @@ export const grantOne = async (username: string, permit: Permit) => {
  * @param {Permit} permit Permiso a denegar
  * @returns {Promise<UserPermit>}
  */
-export const denyOne = async (username: string, permit: Permit) => {
+export const denyOne = async (username: string, permit: Permit): Promise<UserPermit> => {
     return u.post("users/u/" + username + "/deny/p/" + permit)
     .then(response => response.json())
     .catch(err => {
