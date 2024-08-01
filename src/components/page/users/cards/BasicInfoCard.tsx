@@ -10,7 +10,7 @@ export interface BasicInfoCardProps {
 
 export const BasicInfoCard = ({ user }: BasicInfoCardProps) => {
     if(!user) return <></>;
-    return (<Card>
+    return (<Card className={"card"}>
         <CardHeader>
             <div className="font-semibold">Información básica</div>
         </CardHeader>

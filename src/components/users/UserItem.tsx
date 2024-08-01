@@ -3,7 +3,7 @@
 
 import {IUser} from "../../entity/users";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "../ui/card";
-import React from "react";
+import React, {JSXElementConstructor, ReactElement} from "react";
 import {UserContextMenu} from "./UserContextMenu";
 import { Avatar } from "@radix-ui/react-avatar";
 import {AvatarFallback} from "../ui/avatar";
@@ -19,7 +19,7 @@ export interface UserItemProps {
     onClick?: (user: IUser) => void;
     className?: string;
 }
-export const UserItem = ({user, isLoading, viewMode, onClick, className}: UserItemProps) => {
+export const UserItem = ({user, isLoading, viewMode, onClick, className}: UserItemProps): ReactElement<any, string | JSXElementConstructor<any>> => {
     const c: boolean = !viewMode || viewMode === ViewMode.COMPACT;
     let x = () => ["w-12", "w-14", "w-16", "w-20", "w-28"][Math.floor(Math.random() * 10) % 5];
     let y = () => ["w-20", "w-28", "w-32", "w-36", "w-40"][Math.floor(Math.random() * 10) % 5] + " max-w-2/3";
@@ -45,7 +45,7 @@ export const UserItem = ({user, isLoading, viewMode, onClick, className}: UserIt
         </div>);
     }
     if(user == null) return <></>;
-    if(viewMode == ViewMode.TABLE) return (viewMode == ViewMode.TABLE && <TableRow onClick={():void=>{(onClick??((u:IUser):void=>{}))(user);}} key={user.username + "Row"} className={(className??"")}>
+    if(viewMode == ViewMode.TABLE) return (<TableRow onClick={():void=>{(onClick??((u:IUser):void=>{}))(user);}} key={user.username + "Row"} className={(className??"")}>
         <TableCell className="font-medium">{user.name}</TableCell>
         <TableCell>{user.username}</TableCell>
         <TableCell>{user.active ? "Habilitado" : "Deshabilitado"}</TableCell>

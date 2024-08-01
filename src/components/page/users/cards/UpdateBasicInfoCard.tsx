@@ -47,7 +47,7 @@ export const UpdateBasicInfoCard = ({ user, onUpdate }: UpdateBasicInfoCardProps
                 });
         }
     };
-    return (<Card>
+    return (<Card className={"card"}>
         <CardHeader>
             <div className="font-semibold">Actualizar información</div>
         </CardHeader>

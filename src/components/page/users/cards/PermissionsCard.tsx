@@ -17,7 +17,7 @@ export interface PermissionsCardProps {
 
 export const PermissionsCard = ({ user }: PermissionsCardProps) => {
     if(!user) return <></>;
-    return (<Card>
+    return (<Card className={"card"}>
         <CardHeader>
             <div className="font-semibold">Permisos</div>
         </CardHeader>

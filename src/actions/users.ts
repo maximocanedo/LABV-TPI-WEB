@@ -76,6 +76,10 @@ export class Query extends GenericQuery<IUser> {
     }
 }
 
+const itsAPIError = (json: Record<string, any>): boolean => {
+    return 'error' in json || ('path' in json && 'message' in json && 'details' in json);
+};
+
 /**
  * Busca un usuario por su nombre de usuario.
  * @param {string} username Nombre de usuario.
@@ -84,7 +88,10 @@ export class Query extends GenericQuery<IUser> {
 export const getUser = async (username: string): Promise<IUser> => {
     return u.get("users/u/"+username)
         .then(response => response.json())
-        //.then(user => db.update(user))
+        .then(json => {
+            if(itsAPIError(json)) throw ('error' in json ? json.error : json);
+            return json;
+        })
         .catch(err => {
             throw err;
         });

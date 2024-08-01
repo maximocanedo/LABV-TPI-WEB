@@ -42,7 +42,7 @@ export const UserStateCard = ({ user, onUpdate }: UserStateCardProps) => {
             .catch(console.error)
             .finally(() => setLoading(false));
     };
-    return (<Card>
+    return (<Card className={"card my-3"}>
         <CardHeader>
             <div className="font-semibold">{user.active ? "Deshabilitar" : "Habilitar"} registro</div>
         </CardHeader>
@@ -53,7 +53,6 @@ export const UserStateCard = ({ user, onUpdate }: UserStateCardProps) => {
             </div>
             <div className="grid gap-3">
                 <div className="flex flex-1 justify-end">
-
                     <AlertDialog>
                         <AlertDialogTrigger asChild>
                             <Button disabled={loading} variant={user.active ? "destructive" : "default"}>{loading && <Spinner className={"mr-3"} />}{ loading ? (user.active ? "Deshabilitando" : "Habilitando") : (user.active ? "Deshabilitar" : "Habilitar")}</Button>
