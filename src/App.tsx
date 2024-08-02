@@ -22,37 +22,7 @@ export type CurrentUser = User | null | "loading";
 
 const App: React.FC = () => {
     const { me, setCurrentUser, loadCurrentUser } = useCurrentUser();
-    //const [me, setCurrentUser] = useState<CurrentUser>(null);
-    const { toast } = useToast();
-    /** const loadCurrentUser = async () => {
-     setCurrentUser("loading");
-     return users.myself()
-     .then(x => {
-     if(!x) setCurrentUser(null);
-     setCurrentUser(x);
-     })
-     .catch((err) => {
-     setCurrentUser(null);
-     });
-     };*/
-    /* useEffect(() => {
-        loadCurrentUser();
-        document.body.addEventListener("user-logged", async (e) => {
-            await loadCurrentUser();
-            if(me != null && me != "loading") {
-                toast({
-                    title: "¡Hola de nuevo, " + me.name + "!",
-                    description: "¡Bienvenido!"
-                })
-            }
-        });
-    }, []); */
-    const loginTest = async () => {
-        setCurrentUser("loading");
-        users.login("root", "12345678")
-            .then(_response => loadCurrentUser())
-            .catch(console.error);
-    };
+
 
     return (
         <Router>

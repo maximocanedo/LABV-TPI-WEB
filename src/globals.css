@@ -105,5 +105,9 @@
       margin-bottom: 0.5rem;
     }
   }
+  .text-nowrap, .whitespace-nowrap {
+    text-wrap: none !important;
+    white-space: nowrap !important;
+  }
 }
 

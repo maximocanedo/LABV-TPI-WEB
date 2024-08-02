@@ -5,6 +5,7 @@ import { updateAccessToken,
 import { GenericQuery } from './commons';
 import {IUser, Permit, SignUpRequest, User, UserPermit} from "../entity/users";
 import {CommonException} from "../entity/commons";
+import {CurrentUserLoadedEvent} from "../events";
 
 /**
  * Inicia sesión. 
@@ -158,6 +159,7 @@ export const myself = async (): Promise<User> => {
             return response.json();
         }).then((json: User | CommonException | Error) => {
             if(!ok || !('username' in json)) throw json;
+            document.body.dispatchEvent(new CurrentUserLoadedEvent(json));
             return json;
         }).catch(err => {
             throw err;

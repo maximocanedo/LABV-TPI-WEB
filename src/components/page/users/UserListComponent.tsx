@@ -1,10 +1,11 @@
 'use strict';
 
 import {ViewMode} from "../../buttons/ViewModeControl";
-import {IUser} from "../../../entity/users";
+import {IUser, Permits} from "../../../entity/users";
 import {UserItem} from "../../users/UserItem";
 import React from "react";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "../../ui/table";
+import {useCurrentUser} from "../../users/CurrentUserContext";
 
 export interface UserListComponentProps {
     viewMode: ViewMode;
@@ -14,8 +15,10 @@ export interface UserListComponentProps {
 }
 
 export const UserListComponent = ({ viewMode, items, onClick, loading }: UserListComponentProps) => {
-
+    const { me } = useCurrentUser();
     const elements = items.map((result: IUser) => <UserItem onClick={onClick} viewMode={viewMode} key={result.username} user={result}/>);
+
+    const canFilter: boolean = (me != null && me != "loading") && (me.access??[]).some(x => x===Permits.DELETE_OR_ENABLE_USER);
 
     return (viewMode == ViewMode.TABLE ?
         (<Table className={"h-max overflow-visible"}>
@@ -23,7 +26,7 @@ export const UserListComponent = ({ viewMode, items, onClick, loading }: UserLis
                 <TableRow>
                     <TableHead>Nombre</TableHead>
                     <TableHead>Nombre de usuario</TableHead>
-                    <TableHead>Estado</TableHead>
+                    { canFilter && <TableHead>Estado</TableHead> }
                     <TableHead>Doctor</TableHead>
                 </TableRow>
             </TableHeader>

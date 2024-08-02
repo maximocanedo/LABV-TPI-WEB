@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { User } from "../../entity/users";
 import * as users from "../../actions/users";
 import { useToast } from "../ui/use-toast";
+import {CurrentUserLoadedEvent} from "../../events";
 
 export type CurrentUser = User | null | "loading";
 
@@ -19,13 +20,19 @@ export const CurrentUserProvider: React.FC<{ children: ReactNode }> = ({ childre
 
     const loadCurrentUser = async () => {
         setCurrentUser("loading");
-        try {
-            const user = await users.myself();
-            setCurrentUser(user || null);
-        } catch (err) {
-            setCurrentUser(null);
-        }
+        users.myself()
+            .then(setCurrentUser)
+            .catch(err => {
+                console.error(err);
+               users.myself()
+                    .then(setCurrentUser)
+                    .catch(err => {
+                        console.error(err);
+                        setCurrentUser(null);
+                    });
+            });
     };
+
 
     useEffect(() => {
         loadCurrentUser();
@@ -39,6 +46,11 @@ export const CurrentUserProvider: React.FC<{ children: ReactNode }> = ({ childre
             }
         };
         document.body.addEventListener("user-logged", handleUserLogged);
+
+        document.body.addEventListener(CurrentUserLoadedEvent.EVENT_NAME, (ev) => {
+            setCurrentUser((ev as CurrentUserLoadedEvent).detail.user);
+            console.info("Current user was updated. ", { me: (ev as CurrentUserLoadedEvent).detail.user });
+        });
         return () => {
             document.body.removeEventListener("user-logged", handleUserLogged);
         };

@@ -3,6 +3,7 @@
 
 import {HttpMethod} from "./auth";
 import {CommonException} from "./entity/commons";
+import {IUser} from "./entity/users";
 
 export class APIExceptionEvent extends CustomEvent<CommonException> {
     static EVENT_NAME = "onAPIException";
@@ -17,6 +18,13 @@ export class ConnectionFailureEvent extends CustomEvent<{url: string, method: Ht
         super(ConnectionFailureEvent.EVENT_NAME, { detail: { url, method, body, error } });
     }
 }
+
+export class CurrentUserLoadedEvent extends CustomEvent<{user: IUser}> {
+    static EVENT_NAME = "onCurrentUserLoaded";
+    constructor(user: IUser) {
+        super(CurrentUserLoadedEvent.EVENT_NAME, { detail: { user } });
+    }
+};
 
 /**
  * El evento onConnectionFailure se lanza cuando una solicitud HTTP no 

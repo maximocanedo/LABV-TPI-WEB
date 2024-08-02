@@ -23,6 +23,9 @@ import {PermissionsCard} from "./cards/PermissionsCard";
 import {UpdateBasicInfoCard} from "./cards/UpdateBasicInfoCard";
 import {UserStateCard} from "./cards/UserStateCard";
 import {ResetPasswordCard} from "./cards/ResetPasswordCard";
+import {CommonException} from "../../../entity/commons";
+import {RegularErrorPage} from "../commons/RegularErrorPage";
+import {Spinner} from "../../form/Spinner";
 
 export interface UserProfilePageProps {
 
@@ -37,9 +40,11 @@ export const UserProfilePage = (props: UserProfilePageProps) => {
 
     const [user, setUser] = useState<IUser | User | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
+    const [err, setErr] = useState<CommonException | null>(null);
 
     const refresh = () => {
         if(!username) return;
+        setErr(null);
         setLoading(true);
         users.getUser(username)
             .then(user => {
@@ -47,7 +52,7 @@ export const UserProfilePage = (props: UserProfilePageProps) => {
                 else setUser(user);
                 return;
             })
-            .catch(console.error)
+            .catch(setErr)
             .finally(() => setLoading(false));
     };
 
@@ -76,13 +81,19 @@ export const UserProfilePage = (props: UserProfilePageProps) => {
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
-            <div className={"masonry gap-4 p-4 sm:px-6 sm:py-0 p-0 text-sm"}>
-                { !loading && !!user && <BasicInfoCard user={user} /> }
-                { !loading && !!user && <ResetPasswordCard user={user} /> }
-                { !loading && !!user && <PermissionsCard user={user} /> }
-                { !loading && !!user && <UpdateBasicInfoCard user={user} onUpdate={(updated) => {setUser({...user, ...updated});}} /> }
-                { !loading && !!user && <UserStateCard user={user} onUpdate={(state: boolean) => {setUser({ ...user, active: state });}} /> }
-            </div>
+            {!loading && !!user && <div className={"masonry gap-4 p-4 sm:px-6 sm:py-0 p-0 text-sm"}>
+                <BasicInfoCard user={user}/>
+                <ResetPasswordCard user={user}/>
+                <PermissionsCard user={user}/>
+                <UpdateBasicInfoCard user={user} onUpdate={(updated) => {
+                    setUser({...user, ...updated});
+                }}/>
+                <UserStateCard user={user} onUpdate={(state: boolean) => {
+                    setUser({...user, active: state});
+                }}/>
+            </div>}
+            {loading && <div className={"grid w-full h-full place-items-center"}><Spinner /></div> }
+            { (!loading && !!err) && <RegularErrorPage {...err} retry={refresh} /> }
         </PageContent>
     </>);
 };

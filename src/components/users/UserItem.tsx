@@ -1,7 +1,7 @@
 'use strict';
 // TODO: Implementar link de médico cuando esté disponible.
 
-import {IUser} from "../../entity/users";
+import {IUser, Permits} from "../../entity/users";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "../ui/card";
 import React, {JSXElementConstructor, ReactElement} from "react";
 import {UserContextMenu} from "./UserContextMenu";
@@ -11,6 +11,7 @@ import {Skeleton} from "../ui/skeleton";
 import {ViewMode} from "../buttons/ViewModeControl";
 import {Badge} from "../ui/badge";
 import {TableCell, TableRow} from "../ui/table";
+import {useCurrentUser} from "./CurrentUserContext";
 
 export interface UserItemProps {
     user: IUser | null;
@@ -20,7 +21,10 @@ export interface UserItemProps {
     className?: string;
 }
 export const UserItem = ({user, isLoading, viewMode, onClick, className}: UserItemProps): ReactElement<any, string | JSXElementConstructor<any>> => {
+    const { me } = useCurrentUser();
     const c: boolean = !viewMode || viewMode === ViewMode.COMPACT;
+    const canFilter: boolean = (me != null && me != "loading") && (me.access??[]).some(x => x===Permits.DELETE_OR_ENABLE_USER);
+
     let x = () => ["w-12", "w-14", "w-16", "w-20", "w-28"][Math.floor(Math.random() * 10) % 5];
     let y = () => ["w-20", "w-28", "w-32", "w-36", "w-40"][Math.floor(Math.random() * 10) % 5] + " max-w-2/3";
     if(isLoading) {
@@ -28,7 +32,7 @@ export const UserItem = ({user, isLoading, viewMode, onClick, className}: UserIt
             return (<TableRow className={className??""}>
                 <TableCell><Skeleton className={"h-3 " + x() } /></TableCell>
                 <TableCell><Skeleton className={"h-3 " + x() } /></TableCell>
-                <TableCell><Skeleton className={"h-3 " + x() } /></TableCell>
+                {canFilter && <TableCell><Skeleton className={"h-3 " + x() } /></TableCell>}
                 <TableCell><Skeleton className={"h-3 " + x() } /></TableCell>
             </TableRow>);
         }
@@ -48,7 +52,7 @@ export const UserItem = ({user, isLoading, viewMode, onClick, className}: UserIt
     if(viewMode == ViewMode.TABLE) return (<TableRow onClick={():void=>{(onClick??((u:IUser):void=>{}))(user);}} key={user.username + "Row"} className={(className??"")}>
         <TableCell className="font-medium">{user.name}</TableCell>
         <TableCell>{user.username}</TableCell>
-        <TableCell>{user.active ? "Habilitado" : "Deshabilitado"}</TableCell>
+        {canFilter && <TableCell>{user.active ? "Habilitado" : "Deshabilitado"}</TableCell>}
         <TableCell>{user.doctor ? user.doctor.surname + ", " + user.doctor.name : "Sin doctor vinculado"}</TableCell>
     </TableRow>);
     return (<UserContextMenu user={user}>

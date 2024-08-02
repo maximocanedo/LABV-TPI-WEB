@@ -18,6 +18,8 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "../../../ui/alert-dialog";
+import {useToast} from "../../../ui/use-toast";
+import {ToastAction} from "../../../ui/toast";
 
 export interface UserStateCardProps {
     user: IUser;
@@ -26,18 +28,40 @@ export interface UserStateCardProps {
 
 export const UserStateCard = ({ user, onUpdate }: UserStateCardProps) => {
     const { me } = useCurrentUser();
+    const { toast } = useToast();
     const [loading, setLoading] = useState<boolean>(false);
     if(!me || me == "loading") return <></>;
     const canEdit: boolean = me.active && ((me.access??[]).some(x=>x===Permits.DELETE_OR_ENABLE_USER));
-    if(!canEdit || me.username === "root") return <></>;
+    if(!canEdit || user.username === "root") return <></>;
     const itsMe = () => me.username === user.username;
     const update = () => {
         setLoading(true);
         users[user.active ? "disable" : "enable"](user.username)
             .then((ok) => {
-                if(ok) onUpdate(!user.active);
+                if(ok) {
+                    onUpdate(!user.active);
+                    toast({
+                        title: "Operación exitosa. ",
+                        description: `El usuario @${user.username} fue ${!user.active ? "habilitado" : "deshabilitado"} correctamente. `
+                    });
+                }
+                else {
+                    toast({
+                        variant: "destructive",
+                        title: "Algo salió mal. ",
+                        description: "Hubo un error desconocido al intentar realizar esta acción. ",
+                        action: <ToastAction onClick={update} altText="Reintentar">Reintentar</ToastAction>
+                    });
+                }
             })
-            .catch(console.error)
+            .catch(err => {
+                toast({
+                    variant: "destructive",
+                    title: err.message?? "Algo salió mal. ",
+                    description: err.description?? "Hubo un error desconocido al intentar realizar esta acción. ",
+                    action: <ToastAction onClick={update} altText="Reintentar">Reintentar</ToastAction>
+                });
+            })
             .finally(() => setLoading(false));
     };
     return (<Card className={"card my-3"}>

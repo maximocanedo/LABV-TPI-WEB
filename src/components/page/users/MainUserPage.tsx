@@ -1,7 +1,7 @@
 'use strict';
 
 import {Header} from "../commons/Header";
-import {Plus} from "lucide-react";
+import {ListFilter, Plus, RefreshCcw} from "lucide-react";
 import {PageContent} from "../commons/PageContent";
 import * as users from "../../../actions/users";
 import React, {useEffect, useReducer, useState} from "react";
@@ -14,7 +14,7 @@ import {
 } from "src/components/ui/breadcrumb";
 import {BreadcrumbList} from "../../ui/breadcrumb";
 import {FilterStatus} from "../../../actions/commons";
-import {IUser} from "../../../entity/users";
+import {IUser, Permits} from "../../../entity/users";
 import {useCurrentUser} from "../../users/CurrentUserContext";
 import {StatusFilterControl} from "../../buttons/StatusFilterControl";
 import {UserCommandQuery} from "../../commands/UserCommandQuery";
@@ -24,6 +24,8 @@ import {ViewMode, ViewModeControl} from "../../buttons/ViewModeControl";
 import {UserListComponent} from "./UserListComponent";
 import {useNavigate} from "react-router";
 import {resolveLocalUrl} from "../../../auth";
+import {RegularErrorPage} from "../commons/RegularErrorPage";
+import {Spinner} from "../../form/Spinner";
 
 export interface MainUserPageProps {
 }
@@ -60,11 +62,13 @@ export const MainUserPage = (props: MainUserPageProps) => {
     const rem = (payload: IUser) => dispatch({ type: resultAction.REMOVE, payload });
     const cls = () => dispatch({ type: resultAction.CLEAR, payload: null });
 
+    const canFilter: boolean = (me != null && me != "loading") && (me.access??[]).some(x => x===Permits.DELETE_OR_ENABLE_USER);
+
     const getQuery = (): users.Query => {
         return new users.Query(q).filterByStatus(status);
     };
     const search = (obj = {filter: null}) => {
-        if(!obj || !obj.filter) {} else {
+        if(!canFilter || (!obj || !obj.filter)) {} else {
             setStatus(obj.filter);
             return;
         }
@@ -92,6 +96,7 @@ export const MainUserPage = (props: MainUserPageProps) => {
             });
     };
 
+
     const onSearch = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         search();
@@ -100,8 +105,6 @@ export const MainUserPage = (props: MainUserPageProps) => {
 
     useEffect(() => {
         search();
-        console.log(users.permitDocs);
-
     }, [status]);
 
     return (<>
@@ -123,18 +126,26 @@ export const MainUserPage = (props: MainUserPageProps) => {
                     </BreadcrumbList>
                 </Breadcrumb>
                 <Tabs defaultValue="COMFY" className="w-[400px]">
-                    <div className="flex justify-start gap-2">
+                    <div className="flex justify-start gap-2 w-full">
                         <ViewModeControl onChange={setViewMode}/>
-                        <StatusFilterControl value={status} onChange={setStatus}/>
+                        {(loading || results.length > 0) && <Button onClick={() => search()} disabled={loading} variant="default" size="sm"
+                                 className="h-7 gap-1 text-sm">
+                            {!loading && <RefreshCcw className={"h-3.5 w-3.5"}/>}
+                            {loading && <Spinner className={"h-3.5 w-3.5"}/>}
+                            <span
+                                className="sr-only sm:not-sr-only text-xs">{loading ? "Cargando" : "Actualizar"}</span>
+                        </Button>}
+                        <StatusFilterControl disabled={!canFilter} value={status} onChange={setStatus}/>
                     </div>
                 </Tabs>
-                <div className={"overflow-visible --force-overflow-visible"}>
+                {(loading || results.length > 0) && <div className={"overflow-visible --force-overflow-visible"}>
                     <UserListComponent viewMode={viewMode} loading={loading} items={results} onClick={(user) => {
                         navigate(resolveLocalUrl("/users/" + user.username));
-                    }} />
-                </div>
+                    }}/>
+                </div>}
+                {results.length === 0 && !loading && <RegularErrorPage path={""} message={"No se encontraron resultados"} description={"Intentá ajustando los filtros o cambiando el texto de la consulta. "} retry={search} /> }
                 {
-                    !loading && <div>
+                    !loading && results.length > 0 && <div>
                         <Button variant={"outline"} onClick={next}><Plus className={"mr-2"}/>Cargar más</Button>
                     </div>
                 }
