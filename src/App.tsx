@@ -17,6 +17,7 @@ import {LateralMenu} from "./components/page/commons/LateralMenu";
 import {MainUserPage} from "./components/page/users/MainUserPage";
 import {CurrentUserProvider, useCurrentUser} from "./components/users/CurrentUserContext";
 import {UserProfilePage} from "./components/page/users/UserProfilePage";
+import {MainSpecialtyPage} from "./components/page/specialties/MainSpecialtyPage";
 
 export type CurrentUser = User | null | "loading";
 
@@ -52,6 +53,7 @@ const App: React.FC = () => {
                         <Route path={"/"} element={<></>}/>
                         <Route path={"/users"} element={<MainUserPage />}/>
                         <Route path={"/users/:username"} element={<UserProfilePage />} />
+                        <Route path={"/specialties"} element={<MainSpecialtyPage />} />
                     </Routes>
                 </div>
             </div>
