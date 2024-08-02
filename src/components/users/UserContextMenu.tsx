@@ -48,9 +48,6 @@ export const UserContextMenu = ({children, user}: UserContextMenuProps) => {
                 <ContextMenuItem inset>
                     Ver perfil
                 </ContextMenuItem>
-                <ContextMenuItem inset disabled={!can(Permits.DELETE_OR_ENABLE_USER)}>
-                    Eliminar
-                </ContextMenuItem>
                 <ContextMenuSub>
                     <ContextMenuSubTrigger inset>Copiar</ContextMenuSubTrigger>
                     <ContextMenuSubContent className="w-48">

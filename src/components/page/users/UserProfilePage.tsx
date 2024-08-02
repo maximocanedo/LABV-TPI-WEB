@@ -26,6 +26,7 @@ import {ResetPasswordCard} from "./cards/ResetPasswordCard";
 import {CommonException} from "../../../entity/commons";
 import {RegularErrorPage} from "../commons/RegularErrorPage";
 import {Spinner} from "../../form/Spinner";
+import {useLocalHistory} from "../../local/LocalHistoryContext";
 
 export interface UserProfilePageProps {
 
@@ -36,6 +37,7 @@ export interface UserProfilePageParams extends Record<string, string> {
 
 export const UserProfilePage = (props: UserProfilePageProps) => {
     const navigate = useNavigate();
+    const { users: { log, history } } = useLocalHistory();
     const { username } = useParams<UserProfilePageParams>();
 
     const [user, setUser] = useState<IUser | User | null>(null);
@@ -49,7 +51,9 @@ export const UserProfilePage = (props: UserProfilePageProps) => {
         users.getUser(username)
             .then(user => {
                 if(!user) setUser(null);
-                else setUser(user);
+                else {
+                    setUser(user);
+                }
                 return;
             })
             .catch(setErr)
@@ -57,6 +61,11 @@ export const UserProfilePage = (props: UserProfilePageProps) => {
     };
 
     useEffect(refresh, [ username ]);
+
+    useEffect(() => {
+        if(user != null) log(user);
+        console.log(history);
+    }, [ user ]);
 
     return (<>
         <Header>

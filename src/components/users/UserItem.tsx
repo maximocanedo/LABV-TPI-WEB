@@ -56,7 +56,7 @@ export const UserItem = ({user, isLoading, viewMode, onClick, className}: UserIt
         <TableCell>{user.doctor ? user.doctor.surname + ", " + user.doctor.name : "Sin doctor vinculado"}</TableCell>
     </TableRow>);
     return (<UserContextMenu user={user}>
-            <div onClick={():void=>{(onClick??((u:IUser):void=>{}))(user);}} className={"hover:bg-muted cursor-pointer rounded w-full" + (c ? " p-1 px-1.5 " : " p-1.5 px-3 ") + (className??"")}>
+            <div onClick={():void=>{(onClick??((u:IUser):void=>{}))(user);}} className={"hover:bg-muted cursor-pointer rounded w-full" + (c ? " p-1 px-1.5 " : " p-1.5 px-3 ") + (viewMode === ViewMode.LITTLE_CARDS && " border rounded-lg pr-5 ") + (className??"")}>
                 <div className={"flex items-center rtl:space-x-reverse" + (c ? " space-x-2 " : " space-x-4 ")}>
                     <div className="flex-shrink-0">
                         <Avatar>
@@ -68,7 +68,7 @@ export const UserItem = ({user, isLoading, viewMode, onClick, className}: UserIt
                             <Badge variant={"outline"} className={"ml-2"}>Deshabilitado</Badge>}</p>
                         <p className="text-sm text-gray-500 truncate dark:text-gray-400">@{user.username}</p>
                         {
-                            (!c && user.doctor) &&
+                        (!c && user.doctor) &&
                             <p className={"text-sm text-gray-600 truncate dark:text-gray-500"}>Doctor: {user.doctor.surname}, {user.doctor.name}</p>
                         }
                     </div>

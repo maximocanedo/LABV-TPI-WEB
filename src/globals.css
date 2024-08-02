@@ -96,7 +96,25 @@
     overflow: visible !important;
   }
   .masonry {
-    column-count: 3;
+    --cc: 3;
+  }
+  @media screen and (min-width: 1320px) {
+    .masonry {
+      --cc: 3;
+    }
+  }
+  @media screen and (min-width: 940px) and (max-width: 1320px) {
+    .masonry {
+      --cc: 2;
+    }
+  }
+  @media screen and (min-width: 300px) and (max-width: 940px) {
+    .masonry {
+      --cc: 1;
+    }
+  }
+  .masonry {
+    column-count: var(--cc, 3);
     column-gap: 1rem;
     .card {
       display: inline-block;

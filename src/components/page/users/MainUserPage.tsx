@@ -1,7 +1,7 @@
 'use strict';
 
 import {Header} from "../commons/Header";
-import {ListFilter, Plus, RefreshCcw} from "lucide-react";
+import {CloudDownload, ListFilter, Plus, RefreshCcw} from "lucide-react";
 import {PageContent} from "../commons/PageContent";
 import * as users from "../../../actions/users";
 import React, {useEffect, useReducer, useState} from "react";
@@ -26,6 +26,8 @@ import {useNavigate} from "react-router";
 import {resolveLocalUrl} from "../../../auth";
 import {RegularErrorPage} from "../commons/RegularErrorPage";
 import {Spinner} from "../../form/Spinner";
+import {useLocalHistory} from "../../local/LocalHistoryContext";
+import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "../../ui/accordion";
 
 export interface MainUserPageProps {
 }
@@ -52,6 +54,8 @@ const resultsReducer = (state: IUser[], action: { type: resultAction, payload: I
 export const MainUserPage = (props: MainUserPageProps) => {
     const { me, setCurrentUser, loadCurrentUser } = useCurrentUser();
     const navigate = useNavigate();
+    const { users: { history, rem: remove, clear }} = useLocalHistory();
+
     const [q, setQ] = useState<string>("");
     const [viewMode, setViewMode] = useState<ViewMode>(ViewMode.COMFY);
     const [status, setStatus] = useState<FilterStatus>(FilterStatus.ONLY_ACTIVE);
@@ -113,32 +117,55 @@ export const MainUserPage = (props: MainUserPageProps) => {
                 <UserCommandQuery q={q} onChange={setQ} onSearch={search}  />
             </div>
         </Header>
-            <PageContent>
-                <Breadcrumb>
-                    <BreadcrumbList>
-                        <BreadcrumbItem>
-                            <BreadcrumbLink href="/">Inicio</BreadcrumbLink>
-                        </BreadcrumbItem>
-                        <BreadcrumbSeparator/>
-                        <BreadcrumbItem>
-                            <BreadcrumbPage>Usuarios</BreadcrumbPage>
-                        </BreadcrumbItem>
-                    </BreadcrumbList>
-                </Breadcrumb>
-                <Tabs defaultValue="COMFY" className="w-[400px]">
-                    <div className="flex justify-start gap-2 w-full">
-                        <ViewModeControl onChange={setViewMode}/>
-                        {(loading || results.length > 0) && <Button onClick={() => search()} disabled={loading} variant="default" size="sm"
-                                 className="h-7 gap-1 text-sm">
-                            {!loading && <RefreshCcw className={"h-3.5 w-3.5"}/>}
-                            {loading && <Spinner className={"h-3.5 w-3.5"}/>}
-                            <span
-                                className="sr-only sm:not-sr-only text-xs">{loading ? "Cargando" : "Actualizar"}</span>
-                        </Button>}
-                        <StatusFilterControl disabled={!canFilter} value={status} onChange={setStatus}/>
-                    </div>
+        <PageContent>
+            <Breadcrumb>
+                <BreadcrumbList>
+                    <BreadcrumbItem>
+                        <BreadcrumbLink href="/">Inicio</BreadcrumbLink>
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator/>
+                    <BreadcrumbItem>
+                        <BreadcrumbPage>Usuarios</BreadcrumbPage>
+                    </BreadcrumbItem>
+                </BreadcrumbList>
+            </Breadcrumb>
+            {history.length > 0 && <div className={"w-full max-w-full"}>
+                <Accordion type="single" defaultValue={"item-1"} collapsible className="w-full">
+                    <AccordionItem value="item-1">
+                        <AccordionTrigger>Accedido recientemente</AccordionTrigger>
+                        <AccordionContent>
+                            <UserListComponent
+                                className={" flex-wrap "}
+                                viewMode={ViewMode.LITTLE_CARDS}
+                                loading={false} items={history}
+                                onClick={(user) => {
+                                    navigate(resolveLocalUrl("/users/" + user.username));
+                                }} />
+                        </AccordionContent>
+                    </AccordionItem>
+                </Accordion>
+            </div>}
+            <div className="flex justify-between gap-2 w-full">
+                <Tabs defaultValue="COMFY" className="w-[250px]">
+                    <ViewModeControl onChange={setViewMode}/>
                 </Tabs>
-                {(loading || results.length > 0) && <div className={"overflow-visible --force-overflow-visible"}>
+                <StatusFilterControl disabled={!canFilter} value={status} onChange={setStatus}/>
+                {(loading || results.length > 0) &&
+                    <Button onClick={() => search()} disabled={loading} variant="outline" size="sm"
+                            className="h-7 gap-1 text-sm">
+                        {!loading && <RefreshCcw className={"h-3.5 w-3.5"}/>}
+                        {loading && <Spinner className={"h-3.5 w-3.5"}/>}
+                        <span
+                            className="sr-only sm:not-sr-only text-xs">{loading ? "Cargando" : "Actualizar"}</span>
+                    </Button>}
+                <div className="w-full"></div>
+                <Button onClick={() => {}} variant={"outline"} disabled={true} size={"sm"} className={"h-7 gap-1 text-sm"}>
+                        <CloudDownload className={"h-3.5 w-3.5"} />
+                        <span
+                            className="sr-only sm:not-sr-only text-xs">Exportar</span>
+                </Button>
+            </div>
+            {(loading || results.length > 0) && <div className={"overflow-visible --force-overflow-visible"}>
                     <UserListComponent viewMode={viewMode} loading={loading} items={results} onClick={(user) => {
                         navigate(resolveLocalUrl("/users/" + user.username));
                     }}/>

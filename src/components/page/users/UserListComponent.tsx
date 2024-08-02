@@ -6,22 +6,24 @@ import {UserItem} from "../../users/UserItem";
 import React from "react";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "../../ui/table";
 import {useCurrentUser} from "../../users/CurrentUserContext";
+import {View} from "lucide-react";
 
 export interface UserListComponentProps {
     viewMode: ViewMode;
     items: IUser[];
     onClick: (user: IUser) => void;
     loading: boolean;
+    className?: string;
 }
 
-export const UserListComponent = ({ viewMode, items, onClick, loading }: UserListComponentProps) => {
+export const UserListComponent = ({ viewMode, items, onClick, loading, className }: UserListComponentProps) => {
     const { me } = useCurrentUser();
     const elements = items.map((result: IUser) => <UserItem onClick={onClick} viewMode={viewMode} key={result.username} user={result}/>);
 
     const canFilter: boolean = (me != null && me != "loading") && (me.access??[]).some(x => x===Permits.DELETE_OR_ENABLE_USER);
 
     return (viewMode == ViewMode.TABLE ?
-        (<Table className={"h-max overflow-visible"}>
+        (<Table className={"h-max overflow-visible" + (className??"")}>
             <TableHeader>
                 <TableRow>
                     <TableHead>Nombre</TableHead>
@@ -45,7 +47,7 @@ export const UserListComponent = ({ viewMode, items, onClick, loading }: UserLis
             </TableBody>
         </Table>)
             :
-        (<div className={"w-full divide-y" + (!loading && "divide-gray-200 dark:divide-gray-700")}
+            (<div className={(viewMode === ViewMode.LITTLE_CARDS ? "w-full flex justify-start gap-2" : "w-full divide-y" + (!loading && "divide-gray-200 dark:divide-gray-700")) + (className??"")}
               x-chunk="dashboard-02-chunk-1">
             {elements}
             {
