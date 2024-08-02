@@ -9,14 +9,21 @@ import {Label} from "../../../ui/label";
 import { Button } from "../../../ui/button";
 import * as users from "../../../../actions/users";
 import {Spinner} from "../../../form/Spinner";
+import {useToast} from "../../../ui/use-toast";
+import {ToastAction} from "../../../ui/toast";
+import {CommonException} from "../../../../entity/commons";
 
 export interface ResetPasswordCardProps {
     user: IUser;
 }
 
 export const ResetPasswordCard = ({ user }: ResetPasswordCardProps) => {
+
+    const { toast } = useToast();
     const { me, setCurrentUser } = useCurrentUser();
+
     const [ currentPassword, setCurrentPassword ] = useState<string>("");
+    const [ cp, setCp ] = useState<string>("");
     const [ newPassword, setNewPassword ] = useState<string>("");
     const [ cnp, setCnp ] = useState<string>("");
     const [ rs, setRs ] = useState<string>("");
@@ -89,18 +96,43 @@ export const ResetPasswordCard = ({ user }: ResetPasswordCardProps) => {
     }, [ repeatNewPassword, newPassword ]);
 
     if(!me || me == "loading" || !user.active) return <></>;
-    const canEdit: boolean = me.active && (me.username === user.username || (me.access??[]).some(x=>x===Permits.UPDATE_USER_DATA));
+    const canEdit: boolean = me.active && (me.username === user.username || (me.access??[]).some(x=>x===Permits.RESET_PASSWORD));
     if(!canEdit) return <></>;
     const itsMe = (): boolean => me.username === user.username;
 
-    const update = () => {
+    const update = (): void => {
         setLoading(true);
-        if(!itsMe()) { // @ts-ignore
-            // users.resetPassword();
-        } else {
-            // @ts-ignore
-           // users.resetMyPassword();
-        }
+        const request: Promise<boolean> = itsMe() ? users.resetMyPassword(user.username, currentPassword, newPassword) : users.resetPassword(user.username, newPassword);
+        request.then(updated => {
+                if(updated) {
+                    toast({
+                        title: "Operación exitosa. ",
+                        description: "Se cambió con éxito la contraseña de @" + user.username + ". "
+                    });
+                    setCurrentPassword("");
+                    setNewPassword("");
+                    setRepeatNewPassword("");
+                } else {
+                    toast({
+                        variant: "destructive",
+                        title: "Algo salió mal. ",
+                        description: "Hubo un error desconocido al intentar cambiar la contraseña. ",
+                        action: <ToastAction onClick={update} altText="Reintentar">Reintentar</ToastAction>
+                    });
+                }
+            })
+            .catch(err => {
+                console.warn({err});
+                toast({
+                    variant: "destructive",
+                    title: err.message?? "Algo salió mal. ",
+                    description: err.description?? "Hubo un error desconocido al intentar cambiar la contraseña. ",
+                    action: <ToastAction onClick={update} altText="Reintentar">Reintentar</ToastAction>
+                });
+            })
+            .finally(() => {
+                    setLoading(false);
+                });
     };
 
     return (<Card className={"card"}>
@@ -112,7 +144,7 @@ export const ResetPasswordCard = ({ user }: ResetPasswordCardProps) => {
                 { itsMe() && (<>
                     <Label htmlFor={user.username+"$currentPasswordInput"}>Contraseña actual: </Label>
                     <Input disabled={!canEdit || loading} type={"password"} id={user.username+"$currentPasswordInput"} value={currentPassword} onChange={x=>setCurrentPassword(x.target.value)} />
-
+                    { cp.trim() != "" && <span className="text-destructive text-xls">{cp}</span>}
                 </>) }
                 <Label htmlFor={user.username+"$newPassword"}>Nueva contraseña: </Label>
                 <Input disabled={!canEdit || loading} type={"password"} id={user.username+"$newPassword"} value={newPassword} onChange={x=>setNewPassword(x.target.value)} />

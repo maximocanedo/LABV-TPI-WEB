@@ -89,6 +89,7 @@ const req = async (url: string, method: HttpMethod, body: string | Record<string
         if (!firstTry.ok) {
             const err = (await firstTry.json());
             emitAPIException(err.error);
+            throw err.error;
         }
         return firstTry;
     } catch (error: any) {

@@ -4,8 +4,6 @@ import {useCurrentUser} from "../../../users/CurrentUserContext";
 import {IUser, Permits} from "../../../../entity/users";
 import React, {useState} from "react";
 import {Card, CardContent, CardHeader} from "../../../ui/card";
-import {Label} from "../../../ui/label";
-import {Input} from "../../../ui/input";
 import {Button} from "../../../ui/button";
 import {Spinner} from "../../../form/Spinner";
 import * as users from "../../../../actions/users";
@@ -31,7 +29,7 @@ export const UserStateCard = ({ user, onUpdate }: UserStateCardProps) => {
     const [loading, setLoading] = useState<boolean>(false);
     if(!me || me == "loading") return <></>;
     const canEdit: boolean = me.active && ((me.access??[]).some(x=>x===Permits.DELETE_OR_ENABLE_USER));
-    if(!canEdit) return <></>;
+    if(!canEdit || me.username === "root") return <></>;
     const itsMe = () => me.username === user.username;
     const update = () => {
         setLoading(true);

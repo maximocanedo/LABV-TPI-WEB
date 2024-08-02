@@ -52,7 +52,7 @@ export const UserProfilePage = (props: UserProfilePageProps) => {
     };
 
     useEffect(refresh, [ username ]);
-    
+
     return (<>
         <Header>
             <div className="w-full flex-1">
