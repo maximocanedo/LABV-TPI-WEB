@@ -21,7 +21,7 @@ import {UserCommandQuery} from "../../commands/UserCommandQuery";
 import {Button} from "../../ui/button";
 import {Tabs} from "../../ui/tabs";
 import {ViewMode, ViewModeControl} from "../../buttons/ViewModeControl";
-import {UserListComponent} from "./UserListComponent";
+import {UserListComponent} from "../../users/UserListComponent";
 import {useNavigate} from "react-router";
 import {resolveLocalUrl} from "../../../auth";
 import {RegularErrorPage} from "../commons/RegularErrorPage";

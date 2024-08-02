@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User } from "../../entity/users";
+import {Permit, User} from "../../entity/users";
 import * as users from "../../actions/users";
 import { useToast } from "../ui/use-toast";
 import {CurrentUserLoadedEvent} from "../../events";
@@ -10,6 +10,7 @@ interface CurrentUserContextType {
     me: CurrentUser;
     setCurrentUser: (user: CurrentUser) => void;
     loadCurrentUser: () => Promise<void>;
+    can: (action: Permit) => boolean;
 }
 
 const CurrentUserContext = createContext<CurrentUserContextType | undefined>(undefined);
@@ -33,6 +34,9 @@ export const CurrentUserProvider: React.FC<{ children: ReactNode }> = ({ childre
             });
     };
 
+    const can = (action: Permit): boolean =>
+        me != null && me !== "loading" && me.active &&
+        (me.access??[]).some(permit => permit === action);
 
     useEffect(() => {
         loadCurrentUser();
@@ -57,7 +61,7 @@ export const CurrentUserProvider: React.FC<{ children: ReactNode }> = ({ childre
     }, []);
 
     return (
-        <CurrentUserContext.Provider value={{ me, setCurrentUser, loadCurrentUser }}>
+        <CurrentUserContext.Provider value={{ me, setCurrentUser, loadCurrentUser, can }}>
             {children}
         </CurrentUserContext.Provider>
     );

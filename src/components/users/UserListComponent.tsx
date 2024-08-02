@@ -1,11 +1,11 @@
 'use strict';
 
-import {ViewMode} from "../../buttons/ViewModeControl";
-import {IUser, Permits} from "../../../entity/users";
-import {UserItem} from "../../users/UserItem";
+import {ViewMode} from "../buttons/ViewModeControl";
+import {IUser, Permits} from "../../entity/users";
+import {UserItem} from "./UserItem";
 import React from "react";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "../../ui/table";
-import {useCurrentUser} from "../../users/CurrentUserContext";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "../ui/table";
+import {useCurrentUser} from "./CurrentUserContext";
 import {View} from "lucide-react";
 
 export interface UserListComponentProps {
