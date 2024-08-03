@@ -18,6 +18,7 @@ import {MainUserPage} from "./components/page/users/MainUserPage";
 import {CurrentUserProvider, useCurrentUser} from "./components/users/CurrentUserContext";
 import {UserProfilePage} from "./components/page/users/UserProfilePage";
 import {MainSpecialtyPage} from "./components/page/specialties/MainSpecialtyPage";
+import {SpecialtyPage} from "./components/page/specialties/SpecialtyPage";
 
 export type CurrentUser = User | null | "loading";
 
@@ -50,10 +51,15 @@ const App: React.FC = () => {
                 </div>
                 <div className="flex flex-col">
                     <Routes>
+
                         <Route path={"/"} element={<></>}/>
+
                         <Route path={"/users"} element={<MainUserPage />}/>
                         <Route path={"/users/:username"} element={<UserProfilePage />} />
+
                         <Route path={"/specialties"} element={<MainSpecialtyPage />} />
+                        <Route path={"/specialties/:id"} element={<SpecialtyPage />} />
+
                     </Routes>
                 </div>
             </div>

@@ -34,7 +34,7 @@ export class Query extends GenericQuery<Specialty> {
  * @returns {Promise<Specialty>}
  */
 export const findById = async (id: number): Promise<Specialty> => {
-    return u.get("specialties/id/" + id)
+    return u.get("specialties/" + id)
         .then(response => response.json())
         //.then(result => db.update(result))
         .catch(err => {
@@ -49,7 +49,7 @@ export const findById = async (id: number): Promise<Specialty> => {
  * @returns {Promise<Specialty>}
  */
 export const update = async (id: number, data: SpecialtyProps): Promise<Specialty> => {
-    return u.patch("specialties/id/" + id, data)
+    return u.patch("specialties/" + id, data)
         .then(response => response.json())
         //.then(result => db.update(result))
         .catch(err => {
@@ -62,7 +62,7 @@ export const update = async (id: number, data: SpecialtyProps): Promise<Specialt
  * @param {number} id 
  */
 export const disable = async (id: number): Promise<boolean> => {
-    return u.del("specialties/id/" + id)
+    return u.del("specialties/" + id)
         .then(response => response.ok)
         .then(ok => {
             // TODO: Eliminar de la db local.
@@ -78,7 +78,7 @@ export const disable = async (id: number): Promise<boolean> => {
  * @param {number} id 
  */
 export const enable = async (id: number): Promise<boolean> => {
-    return u.post("specialties/id/" + id)
+    return u.post("specialties/" + id)
         .then(response => response.ok)
         .catch(err => {
             throw err;
