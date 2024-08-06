@@ -19,6 +19,7 @@ import {CurrentUserProvider, useCurrentUser} from "./components/users/CurrentUse
 import {UserProfilePage} from "./components/page/users/UserProfilePage";
 import {MainSpecialtyPage} from "./components/page/specialties/MainSpecialtyPage";
 import {SpecialtyPage} from "./components/page/specialties/SpecialtyPage";
+import { MainReportPage } from './components/page/reports/MainReportPage';
 
 export type CurrentUser = User | null | "loading";
 
@@ -59,6 +60,8 @@ const App: React.FC = () => {
 
                         <Route path={"/specialties"} element={<MainSpecialtyPage />} />
                         <Route path={"/specialties/:id"} element={<SpecialtyPage />} />
+
+                        <Route path={"/reports"} element={<MainReportPage />} />
 
                     </Routes>
                 </div>
