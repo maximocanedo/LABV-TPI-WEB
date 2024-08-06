@@ -68,7 +68,7 @@ export const UpdateBasicInfoCard = ({ record, onUpdate }: UpdateBasicInfoCardPro
                 <Textarea className={"h-max"} disabled={!canEdit || loading} id={record.description+"$updateNameInput"} value={description} onChange={x=>setDescription(x.target.value)} />
                 { ableToSubmit && <div className="flex flex-1 justify-end">
                         <Button onClick={update} disabled={loading || name.trim() === ""} variant={"default"}>{loading && <Spinner className={"mr-3"} />}{ loading ? "Guardando" : "Guardar cambios"}</Button>
-                    </div>}
+                    </div> }
             </div>
         </CardContent>
     </Card>);

@@ -7,6 +7,7 @@ import {Badge} from "../ui/badge";
 import {TableCell, TableRow} from "../ui/table";
 import {useCurrentUser} from "./../users/CurrentUserContext";
 import {Specialty} from "../../entity/specialties";
+import {Check} from "lucide-react";
 
 export interface SpecialtyItemProps {
     specialty: Specialty | null;
@@ -14,12 +15,13 @@ export interface SpecialtyItemProps {
     viewMode?: ViewMode;
     onClick?: (user: Specialty) => void;
     className?: string;
+    selectable?: boolean;
+    selected?: boolean;
 }
-export const SpecialtyItem = ({specialty, isLoading, viewMode, onClick, className}: SpecialtyItemProps): ReactElement<any, string | JSXElementConstructor<any>> => {
+export const SpecialtyItem = ({specialty, isLoading, viewMode, onClick, className, selected, selectable}: SpecialtyItemProps): ReactElement<any, string | JSXElementConstructor<any>> => {
     const { me, can } = useCurrentUser();
     const c: boolean = !viewMode || viewMode === ViewMode.COMPACT;
     const canFilter: boolean = can(Permits.READ_DISABLED_SPECIALTY_RECORDS) || can(Permits.DISABLE_SPECIALTY);
-
     let x = () => ["w-12", "w-14", "w-16", "w-20", "w-28"][Math.floor(Math.random() * 10) % 5];
     let y = () => ["w-20", "w-28", "w-32", "w-36", "w-40"][Math.floor(Math.random() * 10) % 5] + " max-w-2/3";
     if(isLoading) {
@@ -31,11 +33,11 @@ export const SpecialtyItem = ({specialty, isLoading, viewMode, onClick, classNam
                 <TableCell><Skeleton className={"h-3 " + x() } /></TableCell>
             </TableRow>);
         }
-        return (<div className={"p-1.5 px-3 rounded w-full " + (className??"")}>
+        return (<div className={"p-2 px-3 rounded w-full no-border " + (className??"")}>
             <div className="flex items-center space-x-4 rtl:space-x-reverse">
                 <div className="flex-1 min-w-0 gap-2">
-                    <Skeleton className={"h-3 mb-1 " + y()} />
-                    <Skeleton className={"h-3 mt-1 " + y()} />
+                    <Skeleton className={"h-4 mb-1.5 " + y()} />
+                    <Skeleton className={"h-3 mt-1.5 " + y()} />
                 </div>
             </div>
         </div>);
@@ -48,15 +50,18 @@ export const SpecialtyItem = ({specialty, isLoading, viewMode, onClick, classNam
         {canFilter && <TableCell>{specialty.active ? "Habilitado" : "Deshabilitado"}</TableCell>}
     </TableRow>);
     return (
-            <div onClick={():void=>{(onClick??((u:Specialty):void=>{}))(specialty);}} className={"hover:bg-muted cursor-pointer rounded w-full" + (c ? " p-1 px-1.5 " : " p-1.5 px-3 ") + (viewMode === ViewMode.LITTLE_CARDS && " border rounded-lg pr-5 ") + (className??"")}>
+            <div onClick={():void=>{(onClick??((u:Specialty):void=>{}))(specialty);}} className={"hover:bg-muted cursor-pointer rounded flex text-wrap w-full " + (c ? " p-1 px-1.5 " : " p-1.5 px-3 ") + (viewMode === ViewMode.LITTLE_CARDS && " border rounded-lg pr-5 ") + (className??"")}>
                 <div className={"flex items-center rtl:space-x-reverse" + (c ? " space-x-2 " : " space-x-4 ")}>
-                    <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate dark:text-white">{specialty.name} {!specialty.active &&
+                    {selectable && <div className="flex-1 max-w-[20px]">
+                        { selected && <Check /> }
+                    </div>}
+                    <div className="flex-1 min-w-0 w-[100%]">
+                        <p className="text-sm font-medium text-gray-900 text-wrap dark:text-white">{specialty.name} {!specialty.active &&
                             <Badge variant={"outline"} className={"ml-2"}>Deshabilitado</Badge>}</p>
-                        <p className="text-sm text-gray-500 truncate dark:text-gray-400">{specialty.description}</p>
+                        <p className="text-sm text-gray-500 text-wrap dark:text-gray-400">{specialty.description}</p>
                         {
                         (!c) &&
-                            <p className={"text-sm text-gray-600 truncate dark:text-gray-500"}>ID: {specialty.id}</p>
+                            <p className={"text-sm text-gray-600 text-wrap dark:text-gray-500"}>ID: {specialty.id}</p>
                         }
                     </div>
                 </div>

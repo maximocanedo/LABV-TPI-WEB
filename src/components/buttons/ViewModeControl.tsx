@@ -28,7 +28,7 @@ export const ViewModeControl = ({ onChange }: ViewModeControlProps) => {
     let compactIcon = <Rows3 className={iconClass} />;
     let tableIcon = <Table className={iconClass} />;
 
-    return (<TabsList  className="grid bg-muted p-1 rounded-lg grid-cols-3">
+    return (<TabsList  className="grid bg-muted p-1 rounded-lg grid-cols-3 w-max">
         <TabsTrigger onClick={()=>onChange(ViewMode.COMFY)} className={"-0"} value="COMFY">{comfyIcon}</TabsTrigger>
         <TabsTrigger onClick={()=>onChange(ViewMode.COMPACT)} className={"-0"} value="COMPACT">{compactIcon}</TabsTrigger>
         <TabsTrigger onClick={()=>onChange(ViewMode.TABLE)} className={"-0"} value="TABLE">{tableIcon}</TabsTrigger>

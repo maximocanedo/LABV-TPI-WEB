@@ -8,6 +8,7 @@ import {Table, TableBody, TableHead, TableHeader, TableRow} from "../../ui/table
 import {useCurrentUser} from "../../users/CurrentUserContext";
 import {Specialty} from "../../../entity/specialties";
 import {SpecialtyItem} from "../../specialties/SpecialtyItem";
+import {Identifiable} from "../../../entity/commons";
 
 export interface SpecialtyListComponentProps {
     viewMode: ViewMode;
@@ -15,11 +16,13 @@ export interface SpecialtyListComponentProps {
     onClick: (specialty: Specialty) => void;
     loading: boolean;
     className?: string;
+    selectable?: boolean;
+    selected?: Identifiable | null;
 }
 
-export const SpecialtyListComponent = ({ viewMode, items, onClick, loading, className }: SpecialtyListComponentProps) => {
+export const SpecialtyListComponent = ({ viewMode, items, onClick, loading, className, selected, selectable }: SpecialtyListComponentProps) => {
     const { me, can } = useCurrentUser();
-    const elements = items.map((result: Specialty) => <SpecialtyItem onClick={onClick} viewMode={viewMode} key={"specialtyItem$" + result.id} specialty={result}/>);
+    const elements = items.map((result: Specialty) => <SpecialtyItem onClick={onClick} viewMode={viewMode} selectable={selectable} selected={!!selected && selected.id === result.id} key={"specialtyItem$" + result.id} specialty={result}/>);
 
     const canFilter: boolean = can(Permits.READ_DISABLED_SPECIALTY_RECORDS) || can(Permits.DISABLE_SPECIALTY);
 
@@ -42,13 +45,13 @@ export const SpecialtyListComponent = ({ viewMode, items, onClick, loading, clas
                         <SpecialtyItem key={"loadingSpecialtyItem3t"} viewMode={ViewMode.TABLE} specialty={null} isLoading={true} className={"opacity-75"} />
                         <SpecialtyItem key={"loadingSpecialtyItem4t"} viewMode={ViewMode.TABLE} specialty={null} isLoading={true} className={"opacity-65"} />
                         <SpecialtyItem key={"loadingSpecialtyItem5t"} viewMode={ViewMode.TABLE} specialty={null} isLoading={true} className={"opacity-55"} />
-                        <SpecialtyItem key={"loadingSpecialtyItem6t"} viewMode={ViewMode.TABLE} specialty={null} isLoading={true} className={"opacity-50"} />
+                        <SpecialtyItem key={"loadingSpecialtyItem6t"} viewMode={ViewMode.TABLE} specialty={null} isLoading={true} className={"opacity-50 "} />
                     </>
                 }
             </TableBody>
         </Table>)
             :
-            (<div className={(viewMode === ViewMode.LITTLE_CARDS ? "w-full flex justify-start gap-2" : "w-full divide-y" + (!loading && "divide-gray-200 dark:divide-gray-700")) + (className??"")}
+            (<div className={(viewMode === ViewMode.LITTLE_CARDS ? "w-full flex justify-start gap-2" : "w-full grid grid-cols-1 " + (!loading && " divide-y divide-gray-200 dark:divide-gray-700")) + (className??"")}
               x-chunk="dashboard-02-chunk-1">
             {elements}
             {
