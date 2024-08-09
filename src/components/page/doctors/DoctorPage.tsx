@@ -24,6 +24,7 @@ import {CardContainer} from "../../containers/commons/CardContainer";
 import {StateCard} from "./cards/StateCard";
 import { ScheduleChartCard } from "./cards/ScheduleChartCard";
 import {RegularErrorPage} from "../commons/RegularErrorPage";
+import {CurrentDoctorContext} from "./CurrentDoctorContext";
 
 export interface DoctorPageProps {
 
@@ -56,7 +57,7 @@ export const DoctorPage = ({  }: DoctorPageProps) => {
             .finally(() => setLoading(false));
     };
     useEffect(refresh, [ file ]);
-    return (<>
+    return (<CurrentDoctorContext.Provider value={{record, updater: setRecord}}>
         <Header>
             <DefBackButton />
         </Header>
@@ -77,16 +78,13 @@ export const DoctorPage = ({  }: DoctorPageProps) => {
                 </BreadcrumbList>
             </Breadcrumb>
             {record && <CardContainer>
-                <BasicInfoCard record={record} updater={setRecord} />
-                <PrivateInfoCard record={record} updater={setRecord} />
-                <CommunicationInfoCard record={record} updater={setRecord} />
-                <ScheduleChartCard record={record} />
-                <StateCard record={record} onUpdate={(updated: boolean): void => {
-                    const newRecord = { ...record, active: updated };
-                    setRecord(newRecord);
-                }} />
+                <BasicInfoCard />
+                <PrivateInfoCard />
+                <CommunicationInfoCard />
+                <ScheduleChartCard />
+                <StateCard />
             </CardContainer>}
             { (!loading && err != null) && <RegularErrorPage {...err} retry={refresh} /> }
         </PageContent>
-    </>);
+    </CurrentDoctorContext.Provider>);
 }

@@ -1,10 +1,10 @@
 'use strict';
 
-import {Doctor, IDoctor} from "src/entity/doctors";
+import {DoctorUpdateRequest, IDoctor} from "src/entity/doctors";
 import {Card, CardContent, CardHeader} from "../../../ui/card";
 import {KeyValueList} from "../../../containers/page-tools/KeyValueList";
 import {KeyValueRow} from "../../../containers/page-tools/KeyValueRow";
-import React, { useState } from "react";
+import React, {useContext, useState} from "react";
 import {SpecialtyLink} from "../../../dialog-selectors/specialty/SpecialtyLink";
 import {Button} from "../../../ui/button";
 import {Pencil, X} from "lucide-react";
@@ -15,31 +15,56 @@ import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import * as doctors from "../../../../actions/doctors";
 import {useToast} from "../../../ui/use-toast";
-import {ToastAction} from "../../../ui/toast";
 import {Spinner} from "../../../form/Spinner";
+import {CurrentDoctorContext} from "../CurrentDoctorContext";
+import {SpecialtyButtonSelector} from "../../../dialog-selectors/specialty/SpecialtyButtonSelector";
+import {useCurrentUser} from "../../../users/CurrentUserContext";
+import {Permits} from "../../../../entity/users";
 
 export interface BasicInfoCardProps {
-    record: IDoctor | undefined | null;
-    updater: (updated: IDoctor | Doctor) => void;
 }
-
+const specialtySchema = z.object({
+    id: z.number(),
+    name: z.string(),
+    description: z.string(),
+    active: z.boolean()
+}).refine(val => val !== null, {
+    message: "Debe seleccionar una especialidad. "
+});
 const formSchema = z.object({
     name: z.string().min(1, {
         message: "El nombre no puede estar vacío. "
     }),
     surname: z.string().min(1, {
         message: "El apellido no puede estar vacío. "
-    })
+    }),
+    specialty: specialtySchema
 });
 
 
-export const BasicInfoCard = ({ record, updater }: BasicInfoCardProps) => {
+const getUpdatedValues = (doc: IDoctor, values: z.infer<typeof formSchema>): DoctorUpdateRequest | null => {
+    let v: DoctorUpdateRequest = {};
+    let i = 0;
+    if(doc.name !== values.name) v = { ...v, name: values.name };
+    else i++;
+    if(doc.surname !== values.surname) v = { ...v, surname: values.surname };
+    else i++;
+    if(values.specialty !== null && doc.specialty.id !== values.specialty.id) v = { ...v, specialty: values.specialty };
+    else i++;
+    if(i === 3) return null;
+    else return v;
+}
 
+export const BasicInfoCard = ({ }: BasicInfoCardProps) => {
+    const {record, updater} = useContext(CurrentDoctorContext);
+    const { me, can } = useCurrentUser();
+    const canEdit: boolean = can(Permits.UPDATE_DOCTOR_PERSONAL_DATA);
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             name: record?.name?? "",
-            surname: record?.surname?? ""
+            surname: record?.surname?? "",
+            specialty: record?.specialty?? { id: -1 }
         },
     });
     const {toast} = useToast();
@@ -48,7 +73,10 @@ export const BasicInfoCard = ({ record, updater }: BasicInfoCardProps) => {
     const onSubmit = (values: z.infer<typeof formSchema>) => {
         if(!record) return;
         setLoading(true);
-        doctors.update(record.id, { ...values })
+        //console.log(values);
+        let updatedValues = getUpdatedValues(record, values);
+        if(!updatedValues) return;
+        doctors.update(record.id, { ...updatedValues })
             .then(updated => {
                 updater(updated);
                 toast({
@@ -65,8 +93,8 @@ export const BasicInfoCard = ({ record, updater }: BasicInfoCardProps) => {
                 });
             }).finally(() => {
                 setLoading(false);
-            });
-    }
+            }); //*/
+    };
 
 
 
@@ -115,21 +143,38 @@ export const BasicInfoCard = ({ record, updater }: BasicInfoCardProps) => {
                             </FormItem>
                         )}
                     />
+                    <FormField
+                        control={form.control}
+                        name="specialty"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Especialidad</FormLabel>
+                                <FormControl>
+                                    <SpecialtyButtonSelector nullable={false} className={"w-full"} value={field.value} onChange={x => {
+                                        if(x != null) field.onChange(x);
+
+                                    }} disabled={loading} />
+                                </FormControl>
+                                <FormDescription></FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
                 </div>}
             </CardContent>
-            <div className={"flex flex-row justify-end p-3 gap-3 pt-0"}>
-                <Button disabled={loading} type={"button"} variant={"ghost"} onClick={() => setEditMode(!editMode)}>
-                    {editMode && <><X className={"pr-2"}/>Cancelar</>}
-                    {!editMode && <><Pencil className={"pr-2"}/>Editar</>}</Button>
-                {
-                    (editMode && true)//(form.getValues("name") == record?.name || form.getValues("surname") !== record?.surname))
-                    && <Button type="submit" variant={"default"} disabled={loading}>
-                    {loading && <Spinner className={"w-4 h-4 mr-2"} />}
-                    {loading && "Guardando"}
-                    {!loading && "Guardar cambios" }
-                </Button>}
-            </div>
-        </Card>
+                {canEdit && <div className={"flex flex-row justify-end p-3 gap-3 pt-0"}>
+                    <Button disabled={loading} type={"button"} variant={"ghost"} onClick={() => setEditMode(!editMode)}>
+                        {editMode && <><X className={"pr-2"}/>Cancelar</>}
+                        {!editMode && <><Pencil className={"pr-2"}/>Editar</>}</Button>
+                    {
+                        (editMode && !!getUpdatedValues(record, form.getValues()))
+                        && <Button type="submit" variant={"default"} disabled={loading}>
+                            {loading && <Spinner className={"w-4 h-4 mr-2"}/>}
+                            {loading && "Guardando"}
+                            {!loading && "Guardar cambios"}
+                        </Button>}
+                </div>}
+            </Card>
 
         </form>
     </Form>;

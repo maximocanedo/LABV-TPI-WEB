@@ -1,19 +1,17 @@
 'use strict';
 
 import {Card, CardContent, CardHeader} from "../../../ui/card";
-import {KeyValueList} from "../../../containers/page-tools/KeyValueList";
-import {KeyValueRow} from "../../../containers/page-tools/KeyValueRow";
-import React from "react";
+import React, {useContext} from "react";
 import {IDoctor} from "../../../../entity/doctors";
-import {ScheduleChart} from "../../../doctors/graphs/ScheduleChart";
 import {ScheduleList} from "../../../doctors/schedules/ScheduleList";
 import {Button} from "../../../ui/button";
+import {CurrentDoctorContext} from "../CurrentDoctorContext";
 
 export interface ScheduleChartCardProps {
-    record: IDoctor;
 }
 
-export const ScheduleChartCard = ({ record }: ScheduleChartCardProps) => {
+export const ScheduleChartCard = ({ }: ScheduleChartCardProps) => {
+    const {record} = useContext(CurrentDoctorContext);
     if(!record || !record.schedules) return null;
     return (<Card className={"card"}>
         <CardHeader className={!record.schedules.length && "pb-2" || ""}>

@@ -46,6 +46,7 @@
     "cmdk": "^1.0.0",
     "date-fns": "^3.6.0",
     "embla-carousel-react": "^8.1.7",
+    "google-libphonenumber": "^3.2.38",
     "input-otp": "^1.2.4",
     "lucide-react": "^0.416.0",
     "next-themes": "^0.3.0",
@@ -68,6 +69,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/google-libphonenumber": "^7.4.30",
     "@types/react": "^18.3.3"
   },
   "browserslist": {

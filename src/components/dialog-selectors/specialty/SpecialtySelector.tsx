@@ -28,10 +28,11 @@ export interface SpecialtySelectorProps {
     onChange: (value: Specialty | null) => void;
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    children: React.ReactNode
+    children: React.ReactNode;
+    nullable?: boolean;
 }
 
-export const SpecialtySelector = ({ value, onChange, open, onOpenChange, children }: SpecialtySelectorProps) => {
+export const SpecialtySelector = ({ value, onChange, open, onOpenChange, children, nullable }: SpecialtySelectorProps) => {
     const { me, can } = useCurrentUser();
     const [selected, setSelected] = useState<Specialty | null>(value);
     const [ query, setQuery ] = useState<string>("");
@@ -39,6 +40,7 @@ export const SpecialtySelector = ({ value, onChange, open, onOpenChange, childre
     const [ status, setStatus ] = useState<FilterStatus>(FilterStatus.ONLY_ACTIVE);
     const [ results, dispatchResults ] = useReducer(useListingBasicReducer<Specialty>, []);
     const { add, clear, prepend } = useDispatchers<Specialty>(dispatchResults);
+
 
     useEffect(() => {
         setSelected(value);
@@ -105,10 +107,12 @@ export const SpecialtySelector = ({ value, onChange, open, onOpenChange, childre
                 </div>
                 {(loading || results.length > 0) && <ScrollArea className={"pt-4 w-full h-fit max-h-[300px]"}>
                     <SpecialtyListComponent selectable={true} selected={selected} className={"w-full"} viewMode={ViewMode.COMFY} loading={loading} items={results} onClick={(specialty) => {
-                        if(value != null && value.id === specialty.id) setSelected(null);
+                        if(value != null && value.id === specialty.id && (nullable??true)) setSelected(null);
                         else {
                             setSelected(specialty);
                             prepend(specialty);
+                            onOpenChange(false);
+                            // setOpen(false);
                         }
                     }}/>
                 </ScrollArea>}

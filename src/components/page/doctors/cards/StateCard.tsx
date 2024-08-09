@@ -2,7 +2,7 @@
 
 import {useCurrentUser} from "../../../users/CurrentUserContext";
 import {Permits} from "../../../../entity/users";
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import {Card, CardContent, CardHeader} from "../../../ui/card";
 import {Button} from "../../../ui/button";
 import {Spinner} from "../../../form/Spinner";
@@ -21,18 +21,19 @@ import {
 import {useToast} from "../../../ui/use-toast";
 import {ToastAction} from "../../../ui/toast";
 import {IDoctor} from "../../../../entity/doctors";
+import {CurrentDoctorContext} from "../CurrentDoctorContext";
 
 export interface StateCardProps {
-    record: IDoctor;
-    onUpdate: (updated: boolean) => void;
+
 }
 
-export const StateCard = ({ record, onUpdate }: StateCardProps) => {
+export const StateCard = ({ }: StateCardProps) => {
     const { me, can } = useCurrentUser();
+    const {record, updater } = useContext(CurrentDoctorContext);
     const { toast } = useToast();
     const [loading, setLoading] = useState<boolean>(false);
-    if(!me || me == "loading") return <></>;
-    const canEdit: boolean = can(Permits.DISABLE_SPECIALTY);
+    if(!record || !me || me == "loading") return <></>;
+    const canEdit: boolean = can(Permits.DISABLE_DOCTOR);
     if(!canEdit) return <></>;
 
     const update = () => {
@@ -40,7 +41,7 @@ export const StateCard = ({ record, onUpdate }: StateCardProps) => {
         data[record.active ? "disable" : "enable"](record.id)
             .then((ok) => {
                 if(ok) {
-                    onUpdate(!record.active);
+                    updater({ ...record, active: !record.active });
                     toast({
                         title: "Operación exitosa. ",
                         description: `El registro fue ${!record.active ? "habilitado" : "deshabilitado"} correctamente. `
