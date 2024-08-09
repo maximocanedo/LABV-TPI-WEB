@@ -41,6 +41,10 @@ export const findById = async (id: number): Promise<IDoctor> => {
 export const findByFile = async (file: number): Promise<IDoctor> => {
     return u.get(`doctors/file/${file}`)
         .then(response => response.json())
+        .then(json => {
+            if('error' in json) throw json.error;
+            return json;
+        })
         //.then(doctor => db.update(doctor)) // Actualiza el almacenamiento local
         .catch(err => {
             throw err;

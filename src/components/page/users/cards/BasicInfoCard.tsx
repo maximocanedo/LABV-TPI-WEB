@@ -3,6 +3,8 @@
 import {Card, CardContent, CardHeader} from "../../../ui/card";
 import React from "react";
 import {IUser} from "../../../../entity/users";
+import {KeyValueList} from "../../../containers/page-tools/KeyValueList";
+import {KeyValueRow} from "../../../containers/page-tools/KeyValueRow";
 
 export interface BasicInfoCardProps {
     user: IUser | null | undefined;
@@ -15,22 +17,11 @@ export const BasicInfoCard = ({ user }: BasicInfoCardProps) => {
             <div className="font-semibold">Información básica</div>
         </CardHeader>
         <CardContent>
-            <div className="grid gap-3">
-                <ul className="grid gap-3">
-                    <li className="flex items-center justify-between">
-                        <span className="text-muted-foreground">Nombre:</span>
-                        <span>{user.name}</span>
-                    </li>
-                    <li className="flex items-center justify-between">
-                        <span className="text-muted-foreground">Nombre de usuario:</span>
-                        <span>@{user.username}</span>
-                    </li>
-                    <li className="flex items-center justify-between">
-                        <span className="text-muted-foreground">Estado:</span>
-                        <span>{user.active ? "Habilitado" : "Deshabilitado"}</span>
-                    </li>
-                </ul>
-            </div>
+            <KeyValueList>
+                <KeyValueRow title={"Nombre"}>{user.name}</KeyValueRow>
+                <KeyValueRow title={"Nombre de usuario"}>{user.username}</KeyValueRow>
+                <KeyValueRow title={"Estado"}>{user.active?"Habilitado":"Deshabilitado"}</KeyValueRow>
+            </KeyValueList>
         </CardContent>
     </Card>);
 }

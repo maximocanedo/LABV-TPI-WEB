@@ -1,7 +1,6 @@
 'use strict';
 
 import {Identifiable} from "../entity/commons";
-import {List} from "postcss/lib/list";
 
 enum ListAction {
     ADD = "ADD",

@@ -29,6 +29,9 @@ import {resolveLocalUrl} from "../../../auth";
 import {UserListComponent} from "../../users/UserListComponent";
 import { useNavigate } from "react-router-dom";
 import {SpecialtyListComponent} from "./SpecialtyListComponent";
+import {SearchPageFilterRow} from "../../containers/commons/SearchPageFilterRow";
+import {RefreshButton} from "../../buttons/commons/filterRow/RefreshButton";
+import {ExportButton} from "../../buttons/commons/filterRow/ExportButton";
 
 export interface MainSpecialtyPageProps {
 
@@ -123,24 +126,12 @@ export const MainSpecialtyPage = (props: MainSpecialtyPageProps) => {
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
-            <div className="flex justify-between gap-2 w-full">
-                <Tabs defaultValue="COMFY" className="w-[250px]">
-                    <ViewModeControl onChange={setViewMode}/>
-                </Tabs>
+            <SearchPageFilterRow>
+                <ViewModeControl defValue={viewMode} onChange={setViewMode}/>
                 <StatusFilterControl disabled={!canFilter} value={status} onChange={setStatus}/>
-                {(loading || results.length > 0) &&
-                    <Button onClick={() => search()} disabled={loading} variant="outline" size="sm"
-                            className="h-7 gap-1 text-sm">
-                        {!loading && <RefreshCcw className={"h-3.5 w-3.5"}/>}
-                        {loading && <Spinner className={"h-3.5 w-3.5"}/>}
-                        <span className="sr-only sm:not-sr-only text-xs">{loading ? "Cargando" : "Actualizar"}</span>
-                    </Button>}
-                <div className="w-full"></div>
-                <Button onClick={() => {}} variant={"outline"} disabled={true} size={"sm"} className={"h-7 gap-1 text-sm"}>
-                    <CloudDownload className={"h-3.5 w-3.5"}/>
-                    <span className="sr-only sm:not-sr-only text-xs">Exportar</span>
-                </Button>
-            </div>
+                <RefreshButton len={results.length} loading={loading} handler={() => search()} />
+                <ExportButton handler={(): void => {}} />
+            </SearchPageFilterRow>
             {(loading || results.length > 0) && <div className={"overflow-visible --force-overflow-visible"}>
                 <SpecialtyListComponent viewMode={viewMode} loading={loading} items={results} onClick={(specialty) => {
                     navigate(resolveLocalUrl("/specialties/" + specialty.id));

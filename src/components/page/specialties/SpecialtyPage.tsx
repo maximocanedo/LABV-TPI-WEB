@@ -22,6 +22,7 @@ import {RegularErrorPage} from "../commons/RegularErrorPage";
 import {BasicInfoCard} from "./cards/BasicInfoCard";
 import {UpdateBasicInfoCard} from "./cards/UpdateBasicInfoCard";
 import {StateCard} from "./cards/StateCard";
+import {DefBackButton} from "../../buttons/DefBackButton";
 
 export interface SpecialtyPageProps {
 
@@ -30,7 +31,7 @@ export interface SpecialtyPageParams extends Record<string, string> {
     id: string;
 }
 
-const extractNumbers = (input: string | undefined): number => {
+export const extractNumbers = (input: string | undefined): number => {
     if(!input) return -1;
     const matches = input.match(/\d+/g);
     if (!matches) return -1;
@@ -64,10 +65,7 @@ export const SpecialtyPage = (props: SpecialtyPageProps) => {
 
     return (<>
         <Header>
-            <div className="w-full flex-1">
-                <Button onClick={() => {navigate(-1)}} variant={"ghost"} className={"flex-1"}><ArrowLeft className={"mr-3 w-4 h-4"}/><span
-                    className={"text-sm"}>Volver</span></Button>
-            </div>
+            <DefBackButton />
         </Header>
         <PageContent>
             <Breadcrumb>

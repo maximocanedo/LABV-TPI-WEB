@@ -3,6 +3,8 @@
 import {Card, CardContent, CardHeader} from "../../../ui/card";
 import React from "react";
 import {Specialty} from "../../../../entity/specialties";
+import {KeyValueList} from "../../../containers/page-tools/KeyValueList";
+import {KeyValueRow} from "../../../containers/page-tools/KeyValueRow";
 
 export interface BasicInfoCardProps {
     specialty: Specialty | null | undefined;
@@ -15,22 +17,11 @@ export const BasicInfoCard = ({ specialty }: BasicInfoCardProps) => {
             <div className="font-semibold">Información básica</div>
         </CardHeader>
         <CardContent>
-            <div className="grid gap-3">
-                <ul className="grid gap-3">
-                    <li className="flex flex-wrap items-start justify-between">
-                        <span className="text-muted-foreground">Nombre:</span>
-                        <span>{specialty.name}</span>
-                    </li>
-                    <li className="flex flex-wrap items-start justify-between">
-                        <span className="text-muted-foreground">Descripción:</span>
-                        <span>{specialty.description}</span>
-                    </li>
-                    <li className="flex items-start flex-wrap justify-between">
-                        <span className="text-muted-foreground">Estado:</span>
-                        <span>{specialty.active ? "Habilitado" : "Deshabilitado"}</span>
-                    </li>
-                </ul>
-            </div>
+            <KeyValueList>
+                <KeyValueRow title={"Nombre"}>{specialty.name}</KeyValueRow>
+                <KeyValueRow title={"Descripción"}>{specialty.description}</KeyValueRow>
+                <KeyValueRow title={"Estado"}>{specialty.active ? "Habilitado" : "Deshabilitado"}</KeyValueRow>
+            </KeyValueList>
         </CardContent>
     </Card>);
 }

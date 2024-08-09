@@ -28,6 +28,10 @@ import {RegularErrorPage} from "../commons/RegularErrorPage";
 import {Spinner} from "../../form/Spinner";
 import {useLocalHistory} from "../../local/LocalHistoryContext";
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "../../ui/accordion";
+import {SearchPageFilterRow} from "../../containers/commons/SearchPageFilterRow";
+import {RefreshButton} from "../../buttons/commons/filterRow/RefreshButton";
+import {ExportButton} from "../../buttons/commons/filterRow/ExportButton";
+import {PaginatorButton} from "../../buttons/commons/PaginatorButton";
 
 export interface MainUserPageProps {
 }
@@ -61,24 +65,26 @@ export const MainUserPage = (props: MainUserPageProps) => {
     const [status, setStatus] = useState<FilterStatus>(FilterStatus.ONLY_ACTIVE);
     const [results, dispatch] = useReducer(resultsReducer, []);
     const [loading, setLoadingState] = useState<boolean>(false);
-
     const add = (payload: IUser) => dispatch({ type: resultAction.ADD, payload });
     const rem = (payload: IUser) => dispatch({ type: resultAction.REMOVE, payload });
     const cls = () => dispatch({ type: resultAction.CLEAR, payload: null });
-
+    const [ page, setPage ] = useState<number>(1);
+    const [ size, setSize] = useState<number>(10);
     const canFilter: boolean = (me != null && me != "loading") && (me.access??[]).some(x => x===Permits.DELETE_OR_ENABLE_USER);
 
-    const getQuery = (): users.Query => {
-        return new users.Query(q).filterByStatus(status);
+    const getQuery = (refresh: boolean = false): users.Query => {
+        return new users.Query(q).filterByStatus(status).paginate(refresh ? 1 : page, refresh ? (results.length > size ? results.length: size) : size);
     };
-    const search = (obj = {filter: null}) => {
+    const search = (obj = {filter: null}, refresh: boolean = true) => {
+        console.info({page, size});
         if(!canFilter || (!obj || !obj.filter)) {} else {
             setStatus(obj.filter);
             return;
         }
+        setPage(1);
         cls();
         setLoadingState(true);
-        getQuery().search()
+        getQuery(refresh).search()
             .then(res => {
                 res.map(add);
             })
@@ -89,6 +95,7 @@ export const MainUserPage = (props: MainUserPageProps) => {
     };
 
     const next = () => {
+        setPage(page + 1);
         setLoadingState(true);
         getQuery().next()
             .then(res => {
@@ -99,6 +106,10 @@ export const MainUserPage = (props: MainUserPageProps) => {
                 setLoadingState(false);
             });
     };
+
+    const refresh = () => {
+        search(undefined,true);
+    }
 
 
     const onSearch = (e: React.FormEvent<HTMLFormElement>) => {
@@ -145,37 +156,19 @@ export const MainUserPage = (props: MainUserPageProps) => {
                     </AccordionItem>
                 </Accordion>
             </div>}
-            <div className="flex justify-between gap-2 w-full">
-                <Tabs defaultValue="COMFY" className="w-[250px]">
-                    <ViewModeControl onChange={setViewMode}/>
-                </Tabs>
+            <SearchPageFilterRow>
+                <ViewModeControl defValue={viewMode} onChange={setViewMode}/>
                 <StatusFilterControl disabled={!canFilter} value={status} onChange={setStatus}/>
-                {(loading || results.length > 0) &&
-                    <Button onClick={() => search()} disabled={loading} variant="outline" size="sm"
-                            className="h-7 gap-1 text-sm">
-                        {!loading && <RefreshCcw className={"h-3.5 w-3.5"}/>}
-                        {loading && <Spinner className={"h-3.5 w-3.5"}/>}
-                        <span
-                            className="sr-only sm:not-sr-only text-xs">{loading ? "Cargando" : "Actualizar"}</span>
-                    </Button>}
-                <div className="w-full"></div>
-                <Button onClick={() => {}} variant={"outline"} disabled={true} size={"sm"} className={"h-7 gap-1 text-sm"}>
-                        <CloudDownload className={"h-3.5 w-3.5"} />
-                        <span
-                            className="sr-only sm:not-sr-only text-xs">Exportar</span>
-                </Button>
-            </div>
+                <RefreshButton len={results.length} loading={loading} handler={() => refresh()} />
+                <ExportButton handler={(): void => {}} />
+            </SearchPageFilterRow>
             {(loading || results.length > 0) && <div className={"overflow-visible --force-overflow-visible"}>
                     <UserListComponent viewMode={viewMode} loading={loading} items={results} onClick={(user) => {
                         navigate(resolveLocalUrl("/users/" + user.username));
                     }}/>
                 </div>}
                 {results.length === 0 && !loading && <RegularErrorPage path={""} message={"No se encontraron resultados"} description={"Intentá ajustando los filtros o cambiando el texto de la consulta. "} retry={search} /> }
-                {
-                    !loading && results.length > 0 && <div>
-                        <Button variant={"outline"} onClick={next}><Plus className={"mr-2"}/>Cargar más</Button>
-                    </div>
-                }
+                <PaginatorButton loading={loading} handler={next} len={results.length} />
             </PageContent>
         </>
     )
