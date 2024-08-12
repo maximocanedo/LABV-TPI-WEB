@@ -85,6 +85,10 @@ export const update = async (id: number, data: DoctorUpdateRequest): Promise<Doc
 export const deleteSchedule = async (scheduleId: number, doctorFile: number): Promise<Schedule[]> => {
     return u.del(`doctors/file/${doctorFile}/schedules/${scheduleId}`)
         .then(response => response.json())
+        .then(json => {
+            if('error' in json) throw json.error;
+            return json;
+        })
         .catch(err => {
             throw err;
         });
@@ -99,6 +103,10 @@ export const addSchedule = async (schedule: Schedule, doctorFile: number): Promi
     return u.post(`doctors/file/${doctorFile}/schedules`, {
         ...schedule
     }).then(response => response.json())
+    .then(json => {
+        if('error' in json) throw json.error;
+        return json;
+    })
     .catch(err => {
         throw err;
     });
