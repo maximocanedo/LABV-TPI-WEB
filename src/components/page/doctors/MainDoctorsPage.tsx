@@ -108,9 +108,7 @@ export const MainDoctorsPage = (props: MainDoctorsPageProps) => {
 
     return (<>
         <Header>
-            <div className="w-full flex-1">
-                <DoctorCommandQuery onSearch={search}/>
-            </div>
+            <DoctorCommandQuery onSearch={search}/>
         </Header>
         <PageContent>
             <Breadcrumb>
