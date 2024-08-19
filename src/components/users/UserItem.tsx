@@ -1,7 +1,7 @@
 'use strict';
 // TODO: Implementar link de médico cuando esté disponible.
 
-import {IUser, Permits} from "../../entity/users";
+import {IdentifiableUser, IUser, Permits} from "../../entity/users";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "../ui/card";
 import React, {JSXElementConstructor, ReactElement} from "react";
 import {UserContextMenu} from "./UserContextMenu";
@@ -12,6 +12,7 @@ import {ViewMode} from "../buttons/ViewModeControl";
 import {Badge} from "../ui/badge";
 import {TableCell, TableRow} from "../ui/table";
 import {useCurrentUser} from "./CurrentUserContext";
+import { Check } from "lucide-react";
 
 export interface UserItemProps {
     user: IUser | null;
@@ -19,8 +20,10 @@ export interface UserItemProps {
     viewMode?: ViewMode;
     onClick?: (user: IUser) => void;
     className?: string;
+    selectable?: boolean;
+    selected?: boolean;
 }
-export const UserItem = ({user, isLoading, viewMode, onClick, className}: UserItemProps): ReactElement<any, string | JSXElementConstructor<any>> => {
+export const UserItem = ({user, isLoading, viewMode, onClick, selected, className, selectable}: UserItemProps): ReactElement<any, string | JSXElementConstructor<any>> => {
     const { me } = useCurrentUser();
     const c: boolean = !viewMode || viewMode === ViewMode.COMPACT;
     const canFilter: boolean = (me != null && me != "loading") && (me.access??[]).some(x => x===Permits.DELETE_OR_ENABLE_USER);
@@ -60,7 +63,7 @@ export const UserItem = ({user, isLoading, viewMode, onClick, className}: UserIt
                 <div className={"flex items-center rtl:space-x-reverse" + (c ? " space-x-2 " : " space-x-4 ")}>
                     <div className="flex-shrink-0">
                         <Avatar>
-                            <AvatarFallback className={"w-8 h-8 rounded-full"}>{user.name.trim()[0]}</AvatarFallback>
+                            <AvatarFallback className={"w-8 h-8 rounded-full"}>{ selected && <Check /> }{!selected && user.name.trim()[0]}</AvatarFallback>
                         </Avatar>
                     </div>
                     <div className="flex-1 min-w-0">

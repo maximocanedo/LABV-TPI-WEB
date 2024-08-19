@@ -8,6 +8,7 @@ import {Skeleton} from "../ui/skeleton";
 import {LoginDialog} from "./LoginDialog";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "../ui/card";
 import {useCurrentUser} from "../users/CurrentUserContext";
+import { UserItem } from "../users/UserItem";
 
 interface LoginButtonSectionProps {
 }
@@ -18,12 +19,17 @@ export const LoginButtonSection = ({ }: LoginButtonSectionProps) => {
     const cardClassList: string = "p-3 md:p-4";
     const rootClassList: string = "p-1 md:p-0 ";
     return (<Card x-chunk="dashboard-02-chunk-0" className={rootClassList}>
-        <CardHeader className={cardClassList}>
-            <CardTitle>{!me ? "Autenticate" : (me == "loading" ? <Skeleton className={"h-4 w-full"} /> : me.name)}</CardTitle>
-            <CardDescription>
-                {!me ? "Ingresá para administrar los turnos. " : (me == "loading" ? <Skeleton className={"h-4 w-3/4"} /> : "@" + me.username)}
-            </CardDescription>
-        </CardHeader>
+        { (!!me && me != "loading") && <div className="p-3">
+                <UserItem user={me} />
+            </div>
+        }{
+            (!me || me == "loading") && <CardHeader className={cardClassList}>
+                <CardTitle>{!me ? "Autenticate" : (me == "loading" && <Skeleton className={"h-4 w-full"} />)}</CardTitle>
+                <CardDescription>
+                    {!me ? "Ingresá para administrar los turnos. " : (me == "loading" && <Skeleton className={"h-4 w-3/4"} />)}
+                </CardDescription>
+            </CardHeader>
+        }
         {me != "loading" && <CardContent className={!me ? "p-2 pt-0 md:p-4 md:pt-0 grid gap-3" : "p-2 pt-0 md:p-4 md:pt-0"}>
             {!!me && <LogoutButton className={"w-full"} size={"sm"} />}
             {!me && (<>

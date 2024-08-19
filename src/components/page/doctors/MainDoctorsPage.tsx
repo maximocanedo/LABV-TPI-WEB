@@ -37,6 +37,8 @@ import {useNavigate} from "react-router";
 import {resolveLocalUrl} from "../../../auth";
 import { useLocalHistory } from "src/components/local/LocalHistoryContext";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "src/components/ui/accordion";
+import { UserSelector } from "src/components/dialog-selectors/users/UserSelector";
+import { IUser } from "src/entity/users";
 
 export interface MainDoctorsPageProps {
 

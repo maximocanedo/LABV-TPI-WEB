@@ -1,7 +1,7 @@
 'use strict';
 
 import {address, Deletable, Identifiable, Localty, Saveable, sex} from "./commons";
-import {IdentifiableUser, IUserMinimalView} from "./users";
+import {IdentifiableUser, IUser, IUserMinimalView} from "./users";
 import {Specialty} from "./specialties";
 
 export interface IdentifiableDoctor extends Identifiable {
@@ -12,7 +12,7 @@ export interface IDoctor extends IdentifiableDoctor, Deletable, Saveable {
     surname: string;
     specialty: Specialty;
     schedules: Schedule[];
-    assignedUser: IUserMinimalView | null;
+    assignedUser: IUserMinimalView | IUser | null;
 }
 export type weekday = 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY';
 export interface ScheduleBasicProps {
@@ -46,6 +46,7 @@ export interface DoctorUpdateRequest {
     localty?: Localty;
     email?: string;
     phone?: string;
+    assignedUser?: IdentifiableUser;
 }
 export interface DoctorRegistrationRequest extends DoctorUpdateRequest {
     file: number;

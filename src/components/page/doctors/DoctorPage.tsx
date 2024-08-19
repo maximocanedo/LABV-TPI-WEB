@@ -26,6 +26,7 @@ import { ScheduleChartCard } from "./cards/ScheduleChartCard";
 import {RegularErrorPage} from "../commons/RegularErrorPage";
 import {CurrentDoctorContext} from "./CurrentDoctorContext";
 import { useLocalHistory } from "src/components/local/LocalHistoryContext";
+import { LinkedUserCard } from "./cards/LinkedUserCard";
 
 export interface DoctorPageProps {
 
@@ -86,6 +87,7 @@ export const DoctorPage = ({  }: DoctorPageProps) => {
             {record && <CardContainer>
                 <BasicInfoCard />
                 <PrivateInfoCard />
+                <LinkedUserCard />
                 <CommunicationInfoCard />
                 <ScheduleChartCard />
                 <StateCard />
