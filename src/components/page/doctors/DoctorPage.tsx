@@ -25,6 +25,7 @@ import {StateCard} from "./cards/StateCard";
 import { ScheduleChartCard } from "./cards/ScheduleChartCard";
 import {RegularErrorPage} from "../commons/RegularErrorPage";
 import {CurrentDoctorContext} from "./CurrentDoctorContext";
+import { useLocalHistory } from "src/components/local/LocalHistoryContext";
 
 export interface DoctorPageProps {
 
@@ -36,12 +37,17 @@ export interface DoctorPageParams extends Record<string, string> {
 export const DoctorPage = ({  }: DoctorPageProps) => {
 
     const { file: rawFile } = useParams<DoctorPageParams>();
-
+    const { doctors: { log, clear, rem, history }} = useLocalHistory();
     const [record, setRecord] = useState<IDoctor | Doctor | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [err, setErr] = useState<CommonException | null>(null);
 
     const file: number = extractNumbers(rawFile);
+
+    useEffect(() => {
+        if(record != null) log(record);
+        console.log(history);
+    }, [ record ]);
 
     const refresh = () => {
         if(!file) return;

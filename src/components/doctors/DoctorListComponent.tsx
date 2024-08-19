@@ -25,7 +25,9 @@ export const DoctorListComponent = ({ viewMode, items, onClick, loading, classNa
         <DoctorListItem record={result} className={""} onClick={onClick} viewMode={viewMode} isLoading={loading} />)
 
     if(viewMode === ViewMode.LITTLE_CARDS) {
-        return <>View Mode currently not supported. </>
+        return <div className="w-full flex justify-start gap-2">
+            {elements}
+        </div>;
     }
 
 

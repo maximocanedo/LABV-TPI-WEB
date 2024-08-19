@@ -9,6 +9,7 @@ export interface SpecialtyCommandQueryProps {
     q?: string;
     onChange?: (value: string) => void;
     onSearch: (obj: any) => void;
+    className?: string;
 }
 
 const fs = (str: string): FilterStatus | null => {
@@ -25,7 +26,7 @@ const fs = (str: string): FilterStatus | null => {
 }
 // @ts-ignore
 // @ts-ignore
-export const SpecialtyCommandQuery = ({q: leg, onChange, onSearch }: SpecialtyCommandQueryProps) => {
+export const SpecialtyCommandQuery = ({q: leg, onChange, onSearch, className }: SpecialtyCommandQueryProps) => {
 
     const [active, setActive] = useState<boolean>(false);
     const [q, setQ] = useState<string>(leg??"");
@@ -50,7 +51,7 @@ export const SpecialtyCommandQuery = ({q: leg, onChange, onSearch }: SpecialtyCo
         onSearch({filter: status});
     };
 
-    return (<form action={"#"} onSubmit={s}>
+    return (<form action={"#"} onSubmit={s} className={" " + (className?? "")}>
             <div className="relative">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"/>
                 <Input
@@ -58,7 +59,7 @@ export const SpecialtyCommandQuery = ({q: leg, onChange, onSearch }: SpecialtyCo
                     onChange={x => setQ(x.target.value)}
                     value={q}
                     placeholder="Buscar especialidades"
-                    className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
+                    className="w-full appearance-none bg-background pl-8 shadow-none w-full"
                 />
             </div>
         </form>

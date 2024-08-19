@@ -1,19 +1,22 @@
-import React, {createContext, useContext, useState, useEffect, ReactNode, useReducer} from 'react';
+import React, {createContext, useContext, useState, useEffect, ReactNode, useReducer, Dispatch} from 'react';
 import {useToast} from "../ui/use-toast";
 import * as users from "../../actions/users";
 import {CurrentUserLoadedEvent} from "../../events";
 import {CurrentUser} from "../users/CurrentUserContext";
 import {IUser} from "../../entity/users";
+import { Identifiable } from 'src/entity/commons';
+import { IDoctor } from 'src/entity/doctors';
 
+interface LocalHistoryContextManager<T extends {}> {
+    history: T[];
+    log: (payload: T) => void;
+    clear: () => void;
+    rem: (payload: T) => void;
+};
 
 interface LocalHistoryContextType {
-    // Users:
-    users: {
-        history: IUser[];
-        log: (payload: IUser) => void;
-        clear: () => void;
-        rem: (payload: IUser) => void;
-    };
+    users: LocalHistoryContextManager<IUser>;
+    doctors: LocalHistoryContextManager<IDoctor>;
 }
 
 const LocalHistoryContext = createContext<LocalHistoryContextType | undefined>(undefined);
@@ -25,7 +28,8 @@ enum ActionType {
 }
 
 const LIMIT = {
-    users: 3
+    users: 3,
+    def: 3
 };
 
 const ur = (state: IUser[], action: { type: ActionType, payload: IUser | null }): IUser[] => {
@@ -44,16 +48,47 @@ const ur = (state: IUser[], action: { type: ActionType, payload: IUser | null })
     } else return [ ...state ].slice(0, LIMIT.users);
 }
 
+const identifiableReducer = <T extends Identifiable>(state: T[], action: { type: ActionType, payload: T | null }): T[] => {
+    if(!action.payload) return [ ...state ].slice(0, LIMIT.def);
+    else if(action.type == ActionType.CLEAR) return [];
+    else if(action.type == ActionType.LOG) {
+        if(!action.payload || (state.length > 0 && state[0].id === action.payload.id)) return [ ...state ].slice(0, LIMIT.def);
+        else {
+            // @ts-ignore
+            return [action.payload, ...([...state].filter(x => x.id != action.payload.id))].slice(0, LIMIT.def);
+        }
+    }
+    else if(action.type == ActionType.REMOVE) {
+        // @ts-ignore
+        return state.filter(x => x.id !== action.payload.id).slice(0, LIMIT.def);
+    } else return [ ...state ].slice(0, LIMIT.def);
+}
+
+
+const reduce = <T extends Identifiable>(red: Dispatch<{ type: ActionType; payload: T | null; }>) => {
+    return {
+        log: (payload: T) => red({ type: ActionType.LOG, payload }),
+        clear: () => red({ type: ActionType.CLEAR, payload: null }),
+        rem: (payload: T) => red({ type: ActionType.LOG, payload })
+    };
+}
+
 export const LocalHistoryContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [me, setCurrentUser] = useState<CurrentUser>(null);
     const [ h_users, reduceUsers ] = useReducer(ur, []);
+    const [ d_doctors, reduceDoctors ] = useReducer(identifiableReducer<IDoctor>, []);
 
     const logUser = (payload: IUser) => reduceUsers({ type: ActionType.LOG, payload });
     const clearUsers = () => reduceUsers({ type: ActionType.CLEAR, payload: null });
     const remUser = (payload: IUser) => reduceUsers({ type: ActionType.REMOVE, payload });
 
+    const doctors = reduce<IDoctor>(reduceDoctors);
+
     return (
-        <LocalHistoryContext.Provider value={{ users: { history: h_users, log: logUser, clear: clearUsers, rem: remUser } }}>
+        <LocalHistoryContext.Provider value={{ 
+            users: { history: h_users, log: logUser, clear: clearUsers, rem: remUser },
+            doctors: { history: d_doctors, ...doctors }
+            }}>
             {children}
         </LocalHistoryContext.Provider>
     );

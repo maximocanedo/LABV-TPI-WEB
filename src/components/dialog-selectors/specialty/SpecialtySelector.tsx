@@ -90,8 +90,8 @@ export const SpecialtySelector = ({ value, onChange, open, onOpenChange, childre
             {children}
         </DialogTrigger>
         <DialogContent>
-            <DialogHeader>
-                <SpecialtyCommandQuery onSearch={search} q={query} onChange={setQuery} />
+            <DialogHeader className="w-full">
+                <SpecialtyCommandQuery onSearch={search} className=" w-full pr-8 " q={query} onChange={setQuery} />
             </DialogHeader>
             <div className={"w-full grid place-items-center flex-wrap"}>
                 <div className="flex justify-between gap-2 w-full">
@@ -105,8 +105,8 @@ export const SpecialtySelector = ({ value, onChange, open, onOpenChange, childre
                         </Button>}
                     <div className="w-full"></div>
                 </div>
-                {(loading || results.length > 0) && <ScrollArea className={"pt-4 w-full h-fit max-h-[300px]"}>
-                    <SpecialtyListComponent selectable={true} selected={selected} className={"w-full"} viewMode={ViewMode.COMFY} loading={loading} items={results} onClick={(specialty) => {
+                {(loading || results.length > 0) && <div className={"pt-4 w-full h-fit h-[300px] overflow-y-scroll max-h-[300px]"}>
+                    <SpecialtyListComponent selectable={true} selected={selected} className={"w-full h-full"} viewMode={ViewMode.COMFY} loading={loading} items={results} onClick={(specialty) => {
                         if(value != null && value.id === specialty.id && (nullable??true)) setSelected(null);
                         else {
                             setSelected(specialty);
@@ -115,7 +115,7 @@ export const SpecialtySelector = ({ value, onChange, open, onOpenChange, childre
                             // setOpen(false);
                         }
                     }}/>
-                </ScrollArea>}
+                </div>}
                 {(!loading && results.length === 0) && <div className={"grid"}>
 
                 </div>}

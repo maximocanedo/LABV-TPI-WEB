@@ -35,6 +35,8 @@ import {RegularErrorPage} from "../commons/RegularErrorPage";
 import {PaginatorButton} from "../../buttons/commons/PaginatorButton";
 import {useNavigate} from "react-router";
 import {resolveLocalUrl} from "../../../auth";
+import { useLocalHistory } from "src/components/local/LocalHistoryContext";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "src/components/ui/accordion";
 
 export interface MainDoctorsPageProps {
 
@@ -42,6 +44,7 @@ export interface MainDoctorsPageProps {
 
 export const MainDoctorsPage = (props: MainDoctorsPageProps) => {
     const navigate = useNavigate();
+    const { doctors: { clear: historyClear, rem, log, history } } = useLocalHistory();
     const [viewMode, setViewMode] = useState<ViewMode>(ViewMode.COMFY);
     const [queryText, setQueryText] = useState<string>("");
     const [status, setStatus] = useState<FilterStatus>(FilterStatus.ONLY_ACTIVE);
@@ -119,6 +122,22 @@ export const MainDoctorsPage = (props: MainDoctorsPageProps) => {
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
+            {history.length > 0 && <div className={"w-full max-w-full"}>
+                <Accordion type="single" defaultValue={"item-1"} collapsible className="w-full">
+                    <AccordionItem value="item-1">
+                        <AccordionTrigger>Accedido recientemente</AccordionTrigger>
+                        <AccordionContent>
+                            <DoctorListComponent
+                                className={" flex-wrap "}
+                                viewMode={ViewMode.LITTLE_CARDS}
+                                loading={false} items={history}
+                                onClick={(x) => {
+                                    navigate(resolveLocalUrl("/doctors/" + x.file));
+                                }} />
+                        </AccordionContent>
+                    </AccordionItem>
+                </Accordion>
+            </div>}
             <SearchPageFilterRow>
                 <ViewModeControl defValue={viewMode} onChange={setViewMode}/>
                 <StatusFilterControl value={status} disabled={false} onChange={setStatus}/>

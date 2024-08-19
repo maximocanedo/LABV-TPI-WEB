@@ -19,7 +19,7 @@ export interface DoctorListItemProps {
 
 export const DoctorListItem = ({ record, isLoading, viewMode, onClick, className }: DoctorListItemProps) => {
 
-    if((!record && !isLoading) || viewMode === ViewMode.LITTLE_CARDS) {
+    if((!record && !isLoading)) {
         return <></>;
     }
     let gridColsClass: string = (viewMode === ViewMode.COMFY ? "grid-rows-3" : (viewMode === ViewMode.COMPACT ? "grid-rows-2" : "") );
@@ -47,6 +47,25 @@ export const DoctorListItem = ({ record, isLoading, viewMode, onClick, className
     }
     if(!record) return <></>;
     const fullNameArr: string = record.surname + ", " + record.name;
+    if(viewMode == ViewMode.LITTLE_CARDS) {
+        return <div className=" border rounded-lg pr-5 overflow-hidden ">
+            <TableRow selectable={false} className={"w-full" + (className??"")}>
+                <TableCell className={"w-[70px] text-center rounded bg-muted"}>{ record.file }</TableCell>
+                <TableCell className={"pl-4 grid" + (gridColsClass)}>
+                    <div className={"text-sm font-medium text-gray-900 truncate dark:text-white hover:underline cursor-pointer"} onClick={() => onClick(record)}>
+                        {fullNameArr}{(!record.active) && <Badge variant={"outline"} className={"ml-2"}>Deshabilitado</Badge>}
+                    </div>
+                    <div className={"text-sm font-medium text-gray-500 truncate dark:text-white"}>
+                        <SpecialtyLink record={record.specialty} />
+                    </div>
+                    {(record.active) && <div className={"text-sm font-medium text-gray-500 truncate dark:text-white"}>
+                        {record.assignedUser && <UserLink showOnlyUsername={true} record={record.assignedUser} />}
+                        {!record.assignedUser && "Sin usuario asociado" }
+                    </div>}
+                </TableCell>
+            </TableRow>
+        </div>;
+    }
     return (<TableRow selectable={false} className={"w-full " + (className??"")}>
         <TableCell className={"w-[70px] text-center"}>{ record.file }</TableCell>
         { viewMode != ViewMode.TABLE && <TableCell className={"grid" + (gridColsClass)}>
