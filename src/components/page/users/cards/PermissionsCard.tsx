@@ -1,21 +1,22 @@
 'use strict';
 
-import {Card, CardContent, CardHeader} from "../../../ui/card";
+import { useContext } from "react";
+import { Permits } from "../../../../entity/users";
 import {
     Accordion,
     AccordionContent,
     AccordionItem,
     AccordionTrigger,
 } from "../../../ui/accordion";
-import React from "react";
-import {IUser, Permits} from "../../../../entity/users";
-import {PermissionItem} from "./PermissionItem";
+import { Card, CardContent, CardHeader } from "../../../ui/card";
+import { CurrentUserContext } from "../CurrentUserContext";
+import { PermissionItem } from "./PermissionItem";
 
 export interface PermissionsCardProps {
-    user: IUser | null | undefined;
 }
 
-export const PermissionsCard = ({ user }: PermissionsCardProps) => {
+export const PermissionsCard = ({ }: PermissionsCardProps) => {
+    const { record: user, updater } = useContext(CurrentUserContext);
     if(!user) return <></>;
     return (<Card className={"card"}>
         <CardHeader>

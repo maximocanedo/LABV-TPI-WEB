@@ -1,16 +1,16 @@
 'use strict';
 
-import {Card, CardContent, CardHeader} from "../../../ui/card";
-import React from "react";
-import {IUser} from "../../../../entity/users";
-import {KeyValueList} from "../../../containers/page-tools/KeyValueList";
-import {KeyValueRow} from "../../../containers/page-tools/KeyValueRow";
+import { useContext } from "react";
+import { KeyValueList } from "../../../containers/page-tools/KeyValueList";
+import { KeyValueRow } from "../../../containers/page-tools/KeyValueRow";
+import { Card, CardContent, CardHeader } from "../../../ui/card";
+import { CurrentUserContext } from "../CurrentUserContext";
 
 export interface BasicInfoCardProps {
-    user: IUser | null | undefined;
 }
 
-export const BasicInfoCard = ({ user }: BasicInfoCardProps) => {
+export const BasicInfoCard = ({ }: BasicInfoCardProps) => {
+    const { record: user, updater } = useContext(CurrentUserContext);
     if(!user) return <></>;
     return (<Card className={"card"}>
         <CardHeader>

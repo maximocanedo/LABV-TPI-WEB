@@ -1,24 +1,23 @@
 'use strict';
 
-import {Card, CardContent, CardHeader} from "../../../ui/card";
-import React, {useEffect, useState} from "react";
-import {useCurrentUser} from "../../../users/CurrentUserContext";
-import {IUser, Permits} from "../../../../entity/users";
-import {Input} from "../../../ui/input";
-import {Label} from "../../../ui/label";
-import { Button } from "../../../ui/button";
+import { useContext, useEffect, useState } from "react";
 import * as users from "../../../../actions/users";
-import {Spinner} from "../../../form/Spinner";
-import {useToast} from "../../../ui/use-toast";
-import {ToastAction} from "../../../ui/toast";
-import {CommonException} from "../../../../entity/commons";
+import { Permits } from "../../../../entity/users";
+import { Spinner } from "../../../form/Spinner";
+import { Button } from "../../../ui/button";
+import { Card, CardContent, CardHeader } from "../../../ui/card";
+import { Input } from "../../../ui/input";
+import { Label } from "../../../ui/label";
+import { ToastAction } from "../../../ui/toast";
+import { useToast } from "../../../ui/use-toast";
+import { useCurrentUser } from "../../../users/CurrentUserContext";
+import { CurrentUserContext } from "../CurrentUserContext";
 
 export interface ResetPasswordCardProps {
-    user: IUser;
 }
 
-export const ResetPasswordCard = ({ user }: ResetPasswordCardProps) => {
-
+export const ResetPasswordCard = ({ }: ResetPasswordCardProps) => {
+    const { record: user, updater } = useContext(CurrentUserContext);
     const { toast } = useToast();
     const { me, setCurrentUser } = useCurrentUser();
 

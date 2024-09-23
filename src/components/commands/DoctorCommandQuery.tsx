@@ -10,6 +10,7 @@ import {clearDoctorQuery, DoctorQueryCleaned} from "../../actions/query.utils";
 export interface DoctorCommandQueryProps {
     q?: string;
     onSearch: (obj: DoctorQueryCleaned) => void;
+    className?: string;
 }
 
 const fs = (str: string): FilterStatus | null => {

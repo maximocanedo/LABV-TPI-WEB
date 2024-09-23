@@ -13,6 +13,8 @@ export interface DoctorListComponentProps {
     items: DoctorMinimalView[];
     onClick: (record: IDoctor | DoctorMinimalView) => void;
     loading: boolean;
+    selectable?: boolean;
+    selected?: IDoctor | null;
     className?: string;
 }
 

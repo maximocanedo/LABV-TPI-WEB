@@ -2,7 +2,7 @@
 
 import {useCurrentUser} from "../../../users/CurrentUserContext";
 import {IUser, Permits} from "../../../../entity/users";
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import {Card, CardContent, CardHeader} from "../../../ui/card";
 import {Button} from "../../../ui/button";
 import {Spinner} from "../../../form/Spinner";
@@ -20,17 +20,18 @@ import {
 } from "../../../ui/alert-dialog";
 import {useToast} from "../../../ui/use-toast";
 import {ToastAction} from "../../../ui/toast";
+import { CurrentUserContext } from "../CurrentUserContext";
 
 export interface UserStateCardProps {
-    user: IUser;
-    onUpdate: (updated: boolean) => void;
 }
 
-export const UserStateCard = ({ user, onUpdate }: UserStateCardProps) => {
+export const UserStateCard = ({ }: UserStateCardProps) => {
+    const { record: user, updater } = useContext(CurrentUserContext);
+    const onUpdate = (active: boolean) => user && updater({ ...user, active });
     const { me } = useCurrentUser();
     const { toast } = useToast();
     const [loading, setLoading] = useState<boolean>(false);
-    if(!me || me == "loading") return <></>;
+    if(!me || me == "loading" || !user) return <></>;
     const canEdit: boolean = me.active && ((me.access??[]).some(x=>x===Permits.DELETE_OR_ENABLE_USER));
     if(!canEdit || user.username === "root") return <></>;
     const itsMe = () => me.username === user.username;

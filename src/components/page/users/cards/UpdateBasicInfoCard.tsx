@@ -1,7 +1,7 @@
 'use strict';
 
 import {Card, CardContent, CardHeader} from "../../../ui/card";
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import {useCurrentUser} from "../../../users/CurrentUserContext";
 import {IUser, Permits} from "../../../../entity/users";
 import {Input} from "../../../ui/input";
@@ -11,18 +11,19 @@ import * as users from "../../../../actions/users";
 import {Spinner} from "../../../form/Spinner";
 import {useToast} from "../../../ui/use-toast";
 import {ToastAction} from "../../../ui/toast";
+import { CurrentUserContext } from "../CurrentUserContext";
 
 export interface UpdateBasicInfoCardProps {
-    user: IUser;
-    onUpdate: (updated: IUser) => void;
 }
 
-export const UpdateBasicInfoCard = ({ user, onUpdate }: UpdateBasicInfoCardProps) => {
+export const UpdateBasicInfoCard = ({ }: UpdateBasicInfoCardProps) => {
+    const { record: user, updater } = useContext(CurrentUserContext);
+    const onUpdate = (u: IUser) => updater({ ...user, ...u });
     const { me, setCurrentUser } = useCurrentUser();
     const { toast } = useToast();
-    const [name, setName] = useState<string>(user.name);
+    const [name, setName] = useState<string>(user?.name??"");
     const [loading, setLoading] = useState<boolean>(false);
-    if(!me || me == "loading" || !user.active) return <></>;
+    if(!me || me == "loading" || !user?.active) return <></>;
     const canEdit: boolean = me.active && (me.username === user.username || (me.access??[]).some(x=>x===Permits.UPDATE_USER_DATA));
     if(!canEdit) return <></>;
     const itsMe = () => me.username === user.username;
