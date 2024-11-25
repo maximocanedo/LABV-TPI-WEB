@@ -32,6 +32,7 @@ import {SpecialtyListComponent} from "./SpecialtyListComponent";
 import {SearchPageFilterRow} from "../../containers/commons/SearchPageFilterRow";
 import {RefreshButton} from "../../buttons/commons/filterRow/RefreshButton";
 import {ExportButton} from "../../buttons/commons/filterRow/ExportButton";
+import {CreateButton} from "../../buttons/commons/filterRow/CreateButton";
 
 export interface MainSpecialtyPageProps {
 
@@ -131,6 +132,9 @@ export const MainSpecialtyPage = (props: MainSpecialtyPageProps) => {
                 <StatusFilterControl disabled={!canFilter} value={status} onChange={setStatus}/>
                 <RefreshButton len={results.length} loading={loading} handler={() => search()} />
                 <ExportButton handler={(): void => {}} />
+                <CreateButton onClick={(): void => {
+                    navigate(resolveLocalUrl("/specialties/new"))
+                }} mustHave={[Permits.CREATE_SPECIALTY]} />
             </SearchPageFilterRow>
             {(loading || results.length > 0) && <div className={"overflow-visible --force-overflow-visible"}>
                 <SpecialtyListComponent viewMode={viewMode} loading={loading} items={results} onClick={(specialty) => {

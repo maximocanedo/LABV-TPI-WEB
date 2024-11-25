@@ -82,6 +82,9 @@
     max-height: 100vh;
     overflow-y: hidden;
   }
+  .root-main__fullHeight {
+    max-height: 100vh;
+  }
   .root-main {
     max-height: calc(100vh - 56px);
     overflow-y: scroll;

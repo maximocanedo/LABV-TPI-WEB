@@ -23,6 +23,7 @@ import {MainDoctorsPage} from "./components/page/doctors/MainDoctorsPage";
 import { MainReportPage } from './components/page/reports/MainReportPage';
 import {DoctorPage} from "./components/page/doctors/DoctorPage";
 import { CreateSpecialtyPage } from './components/page/specialties/CreateSpecialtyPage';
+import {SignupPage} from "./components/page/users/SignupPage";
 
 export type CurrentUser = User | null | "loading";
 
@@ -57,6 +58,7 @@ const App: React.FC = () => {
                     <Routes>
 
                         <Route path={"/"} element={<></>}/>
+                        <Route path={"/signup"} element={<SignupPage />} />
 
                         <Route path={"/users"} element={<MainUserPage />}/>
                         <Route path={"/users/:username"} element={<UserProfilePage />} />
