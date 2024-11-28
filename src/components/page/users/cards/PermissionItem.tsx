@@ -9,6 +9,7 @@ import {CheckedState} from "@radix-ui/react-checkbox";
 import * as users from "../../../../actions/users";
 import {ToastAction} from "../../../ui/toast";
 import {useToast} from "../../../ui/use-toast";
+import {Spinner} from "../../../form/Spinner";
 
 export interface PermissionItemProps {
     user: IUser;
@@ -45,7 +46,9 @@ export const PermissionItem = ({user, action, label}: PermissionItemProps) => {
 
 
     return (<div className={"flex items-center p-1 gap-3"}>
-            <Checkbox onCheckedChange={update} id={user.username + "@" + action} disabled={!canGrant || loading} checked={checked} />
+        {!loading && <Checkbox onCheckedChange={update} id={user.username + "@" + action} disabled={!canGrant || loading}
+                   checked={checked}/>}
+        {loading && <Spinner className={"w-[16px] h-[16px]"}/>}
             <label htmlFor={user.username + "@" + action} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">{label??action}</label>
         </div>);
 };
