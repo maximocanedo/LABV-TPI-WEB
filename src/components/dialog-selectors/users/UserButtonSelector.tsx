@@ -13,13 +13,25 @@ export interface UserFilterSelectorProps {
     className?: string;
     nullable?: boolean;
 }
+export type Setter<T> = (value: T) => void;
+export type State<T> = [T, Setter<T>];
 
 export const UserButtonSelector = ({value: originalValue, onChange, disabled, className, nullable}: UserFilterSelectorProps) => {
-    const [ open, setOpen ] = useState<boolean>(false);
-    const [ value, setValue ] = useState<IUser | null>(originalValue);
+    const [ open, setOpen ]: State<boolean> = useState<boolean>(false);
+    const [ value, setValue ]: State<IUser | null> = useState<IUser | null>(originalValue);
+    // Sincronizar `value` con `originalValue` cuando este cambie
     useEffect(() => {
-        onChange(value);
-    }, [ value ]);
+        if (value !== originalValue) {
+            setValue(originalValue);
+        }
+    }, [originalValue]);
+
+    // Notificar cambios al padre, evitando llamar si el valor no cambió
+    useEffect(() => {
+        if (value !== originalValue) {
+            onChange(value);
+        }
+    }, [value]);
     return (
         <UserSelector nullable={nullable?? true} value={value} onChange={setValue} open={open} onOpenChange={setOpen}>
             <Button disabled={disabled}

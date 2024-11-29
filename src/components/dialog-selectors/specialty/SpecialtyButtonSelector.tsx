@@ -15,12 +15,9 @@ export interface SpecialtyFilterSelectorProps {
     nullable?: boolean;
 }
 
-export const SpecialtyButtonSelector = ({value: originalValue, onChange, disabled, className, nullable}: SpecialtyFilterSelectorProps) => {
+export const SpecialtyButtonSelector = ({value, onChange: setValue, disabled, className, nullable}: SpecialtyFilterSelectorProps) => {
     const [ open, setOpen ] = useState<boolean>(false);
-    const [ value, setValue ] = useState<Specialty | null>(originalValue);
-    useEffect(() => {
-        onChange(value);
-    }, [ value ]);
+
     return (
         <SpecialtySelector nullable={nullable?? true} value={value} onChange={x => {
             if(!(nullable?? true)) setValue(x);

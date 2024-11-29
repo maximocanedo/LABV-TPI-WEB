@@ -38,7 +38,8 @@ import {resolveLocalUrl} from "../../../auth";
 import { useLocalHistory } from "src/components/local/LocalHistoryContext";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "src/components/ui/accordion";
 import { UserSelector } from "src/components/dialog-selectors/users/UserSelector";
-import { IUser } from "src/entity/users";
+import {IUser, Permits} from "src/entity/users";
+import {CreateButton} from "../../buttons/commons/filterRow/CreateButton";
 
 export interface MainDoctorsPageProps {
 
@@ -145,6 +146,9 @@ export const MainDoctorsPage = (props: MainDoctorsPageProps) => {
                 <SpecialtyFilterSelector value={specialty} onChange={setSpecialty} />
                 <RefreshButton loading={loading} len={records.length} handler={refresh} />
                 <ExportButton handler={(): void => {}} />
+                <CreateButton onClick={(): void => {
+                    navigate(resolveLocalUrl("/doctors/new"))
+                }} mustHave={[Permits.CREATE_DOCTOR]} />
             </SearchPageFilterRow>
             {records.length === 0 && !loading && <RegularErrorPage path={""} message={"No se encontraron resultados"} description={"Intentá ajustando los filtros o cambiando el texto de la consulta. "} retry={search} /> }
             {(loading || records.length > 0) &&

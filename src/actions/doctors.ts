@@ -2,7 +2,15 @@
 import * as u from '../auth';
 // import * as db from "./../store/doctors";
 import { GenericQuery } from './commons';
-import {Doctor, DoctorMinimalView, DoctorUpdateRequest, IDoctor, Schedule, weekday} from "../entity/doctors";
+import {
+    Doctor,
+    DoctorMinimalView,
+    DoctorRegistrationRequest,
+    DoctorUpdateRequest,
+    IDoctor,
+    Schedule,
+    weekday
+} from "../entity/doctors";
 import {Identifiable} from "../entity/commons";
 
 /**
@@ -10,7 +18,7 @@ import {Identifiable} from "../entity/commons";
  * @param data Datos del doctor a crear.
  * @returns Promesa con la respuesta del servidor.
  */
-export const create = async (data: DoctorUpdateRequest): Promise<Doctor> => {
+export const create = async (data: DoctorRegistrationRequest): Promise<Doctor> => {
     return u.post("doctors", data)
         .then(response => response.json())
         //.then(doctor => db.update(doctor)) // Actualiza el almacenamiento local
@@ -51,11 +59,15 @@ export const findByFile = async (file: number): Promise<IDoctor> => {
         });
 };
 
-export const existsByFile = async (file: number): Promise<boolean> => u.head(`doctors/file/${file}`)
-    .then(response => response.ok)
-    .catch(err => {
-        throw err;
-    });
+export const existsByFile = async (file: number): Promise<boolean> => {
+    try {
+        const response: Response = await u.head(`doctors/file/${file}`);
+        return response.status == 200;
+    } catch(err) {
+        console.error(err);
+    }
+    return false;
+}
 
 export const existsById = async (id: number): Promise<boolean> =>
     u.head(`doctors/id/${id}`)

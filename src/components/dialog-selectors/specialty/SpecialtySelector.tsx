@@ -18,6 +18,7 @@ import {Spinner} from "../../form/Spinner";
 import {SpecialtyListComponent} from "../../page/specialties/SpecialtyListComponent";
 import {resolveLocalUrl} from "../../../auth";
 import {ScrollArea} from "../../ui/scroll-area";
+import {PaginatorButton} from "../../buttons/commons/PaginatorButton";
 
 /**
  * Componente diálogo de selector de especialidades. NO incluye el trigger.
@@ -43,11 +44,11 @@ export const SpecialtySelector = ({ value, onChange, open, onOpenChange, childre
 
 
     useEffect(() => {
-        setSelected(value);
+        if(value !== selected) setSelected(value);
     }, [ value ]);
 
     useEffect(() => {
-        onChange(selected);
+        if(value !== selected) onChange(selected);
     }, [ selected ]);
 
     const canFilter: boolean = can(Permits.READ_DISABLED_SPECIALTY_RECORDS) || can(Permits.ENABLE_SPECIALTY);
@@ -115,6 +116,7 @@ export const SpecialtySelector = ({ value, onChange, open, onOpenChange, childre
                             // setOpen(false);
                         }
                     }}/>
+                    <PaginatorButton loading={loading} len={results.length} handler={next} />
                 </div>}
                 {(!loading && results.length === 0) && <div className={"grid"}>
 

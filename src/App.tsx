@@ -24,6 +24,7 @@ import { MainReportPage } from './components/page/reports/MainReportPage';
 import {DoctorPage} from "./components/page/doctors/DoctorPage";
 import { CreateSpecialtyPage } from './components/page/specialties/CreateSpecialtyPage';
 import {SignupPage} from "./components/page/users/SignupPage";
+import {SignDoctorPage} from "./components/page/doctors/SignDoctorPage";
 
 export type CurrentUser = User | null | "loading";
 
@@ -68,6 +69,7 @@ const App: React.FC = () => {
                         <Route path={"/specialties/:id"} element={<SpecialtyPage />} />
 
                         <Route path={"/doctors"} element={<MainDoctorsPage />} />
+                        <Route path={"/doctors/new"} element={<SignDoctorPage />} />
                         <Route path={"/doctors/:file"} element={<DoctorPage />} />
                         
                         <Route path={"/reports"} element={<MainReportPage />} />
