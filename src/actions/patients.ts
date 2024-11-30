@@ -90,10 +90,6 @@ export const update = async (id: number, data: IPatientUpdateRequest): Promise<I
 export const disable = async (id: number): Promise<boolean> => {
     return u.del("patients/id/" + id)
         .then(response => response.ok)
-        .then(ok => {
-            // Eliminar de la db local.
-            return ok;
-        })
         .catch(err => {
             throw err;
         });

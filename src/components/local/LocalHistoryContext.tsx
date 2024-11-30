@@ -6,17 +6,19 @@ import {CurrentUser} from "../users/CurrentUserContext";
 import {IUser} from "../../entity/users";
 import { Identifiable } from 'src/entity/commons';
 import { IDoctor } from 'src/entity/doctors';
+import {IPatient} from "../../entity/patients";
 
 interface LocalHistoryContextManager<T extends {}> {
     history: T[];
     log: (payload: T) => void;
     clear: () => void;
     rem: (payload: T) => void;
-};
+}
 
 interface LocalHistoryContextType {
     users: LocalHistoryContextManager<IUser>;
     doctors: LocalHistoryContextManager<IDoctor>;
+    patients: LocalHistoryContextManager<IPatient>;
 }
 
 const LocalHistoryContext = createContext<LocalHistoryContextType | undefined>(undefined);
@@ -77,17 +79,20 @@ export const LocalHistoryContextProvider: React.FC<{ children: ReactNode }> = ({
     const [me, setCurrentUser] = useState<CurrentUser>(null);
     const [ h_users, reduceUsers ] = useReducer(ur, []);
     const [ d_doctors, reduceDoctors ] = useReducer(identifiableReducer<IDoctor>, []);
+    const [ p_patients, reducePatients ] = useReducer(identifiableReducer<IPatient>, []);
 
     const logUser = (payload: IUser) => reduceUsers({ type: ActionType.LOG, payload });
     const clearUsers = () => reduceUsers({ type: ActionType.CLEAR, payload: null });
     const remUser = (payload: IUser) => reduceUsers({ type: ActionType.REMOVE, payload });
 
     const doctors = reduce<IDoctor>(reduceDoctors);
+    const patients = reduce<IPatient>(reducePatients);
 
     return (
         <LocalHistoryContext.Provider value={{ 
             users: { history: h_users, log: logUser, clear: clearUsers, rem: remUser },
-            doctors: { history: d_doctors, ...doctors }
+            doctors: { history: d_doctors, ...doctors },
+            patients: { history: p_patients, ...patients }
             }}>
             {children}
         </LocalHistoryContext.Provider>

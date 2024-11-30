@@ -53,7 +53,7 @@ const weekdayInSpanish: Record<weekday, string> = {
 };
 export const printSchedule = (s: Schedule): string => {
     //return `Miércoles 23:59 - Miércoles 23:59`;
-    return `${weekdayInSpanish[s.beginDay]} ${s.startTime.slice(0,5)} → ${s.beginDay !== s.finishDay ? weekdayInSpanish[s.finishDay] + " ":''} ${s.endTime.slice(0,5)}`;
+    return `${weekdayInSpanish[s.beginDay]} ${s.startTime}h → ${s.beginDay !== s.finishDay ? weekdayInSpanish[s.finishDay] + " ":''} ${s.endTime}h`;
 }
 
 export const DoctorScheduleCollapsibleCell = ({ schedules }: DoctorScheduleCollapsibleCellProps) => {

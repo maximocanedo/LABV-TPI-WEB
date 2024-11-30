@@ -25,8 +25,8 @@ import { Spinner } from "src/components/form/Spinner";
  
 const formSchema = z.object({
     day: z.string().min(1),
-    startTime: z.string().min(1).regex(/^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/, "Ingrese una hora válida"),
-    endTime: z.string().min(1).regex(/^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/, "Ingrese una hora válida")
+    startTime: z.number().max(23, "Ingrese una hora válida. "),
+    endTime: z.number().max(23, "Ingrese una hora válida. ")
 });
 export interface ScheduleDialogProps {
     children: ReactNode | ReactNode[];
@@ -40,7 +40,7 @@ const getStartTimeByDefault = (): [hour, minute, string] => {
     const actualHour: hour = date.getHours() as hour;
     const actualMin: minute = date.getMinutes() as minute;
     const finalHour: hour = (actualHour + (actualMin < 30?0:1) as hour);
-    const finalMin: minute = (actualMin < 30 ? 0 : 30) as minute; 
+    const finalMin: minute = (actualMin < 30 ? 0 : 30) as minute;
     return [ finalHour, finalMin, formatHour(finalHour, finalMin) ];
 }
 const getFinishTimeByDefault = (): [hour, minute, string] => {
@@ -68,17 +68,15 @@ export const ScheduleDialog = ({ children }: ScheduleDialogProps) => {
         resolver: zodResolver(formSchema),
         defaultValues: {
             day: weekdays[new Date().getDay()],
-            startTime: getStartTimeByDefault()[2],
-            endTime: getFinishTimeByDefault()[2]
+            startTime: getStartTimeByDefault()[0],
+            endTime: getFinishTimeByDefault()[0]
         },
     });
     const onSubmit = (values: z.infer<typeof formSchema>) => {
         setLoading(true);
-        const startTime: string = values.startTime + ":00";
-        const endTime: string = values.endTime + ":00";
         const schedule: Schedule = {
-            startTime,
-            endTime,
+            startTime: values.startTime as hour,
+            endTime: values.endTime as hour,
             beginDay: values.day as weekday,
             finishDay: (values.endTime <= values.startTime ? weekdays[(weekdays.indexOf(values.day as weekday) + 1) % 7] : values.day) as weekday,
             id: -1,
@@ -144,38 +142,48 @@ export const ScheduleDialog = ({ children }: ScheduleDialogProps) => {
                                             </FormItem>
                                         )}
                                     />
-                                    <FormField
-                                        control={form.control}
-                                        name="startTime"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                            <FormLabel>Inicio</FormLabel>
-                                            <FormControl>
-                                                <Input placeholder="shadcn" {...field} type="time" />
-                                            </FormControl>
-                                            <FormDescription>
-                                                {}
-                                            </FormDescription>
-                                            <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="endTime"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                            <FormLabel>Fin</FormLabel>
-                                            <FormControl>
-                                                <Input {...field} type="time" />
-                                            </FormControl>
-                                            <FormDescription>
-                                                { form.getValues().endTime <= form.getValues().startTime && "El horario termina al día siguiente. " }
-                                            </FormDescription>
-                                            <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
+                                    <div className="w-full grid grid-cols-2 gap-x-4">
+                                        <div className={"w-full"}>
+                                            <FormField
+                                                control={form.control}
+                                                name="startTime"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>Inicio</FormLabel>
+                                                        <FormControl>
+                                                            <Input placeholder="shadcn" {...field} onChange={x => {
+                                                                field.onChange(Number(x.target.value))
+                                                            }} type="number" max={23} min={0} />
+                                                        </FormControl>
+                                                        <FormDescription>
+                                                            {}
+                                                        </FormDescription>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </div>
+                                        <div className="full">
+                                            <FormField
+                                                control={form.control}
+                                                name="endTime"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>Fin</FormLabel>
+                                                        <FormControl>
+                                                            <Input {...field} onChange={x => {
+                                                                field.onChange(Number(x.target.value))
+                                                            }} type="number" max={23} min={0} />
+                                                        </FormControl>
+                                                        <FormDescription>
+                                                            { form.getValues().endTime <= form.getValues().startTime && "El horario termina al día siguiente. " }
+                                                        </FormDescription>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </div>
+                                    </div>
                                     <Button type="submit" >OK</Button>
                                 </div>
                             </form>

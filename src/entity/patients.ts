@@ -26,4 +26,13 @@ export type Patient = IPatient & PatientCommunicationProps & PatientPrivateProps
 export interface IPatientSignRequest extends PatientBasicProps, PatientCommunicationProps, PatientPrivateProps {
     dni: string;
 }
-export interface IPatientUpdateRequest extends PatientBasicProps, PatientCommunicationProps, PatientPrivateProps {}
+export interface IPatientUpdateRequest {
+    name?: string;
+    surname?: string;
+    phone?: string;
+    email?: string;
+    address?: address;
+    localty?: Localty;
+    province?: Province;
+    birth?: Date;
+}
