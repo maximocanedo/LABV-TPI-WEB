@@ -41,6 +41,10 @@ export const PatientPage = ({}: PatientPageProps) => {
         = useState<CommonException | null>(null);
     const [ loading, setLoading ] = useState<boolean>(false);
 
+    useEffect(() => {
+        if(record != null) patients.log(record);
+    }, [ record ]);
+
     const refresh = () => {
         if(!id) return;
         setErr(null);

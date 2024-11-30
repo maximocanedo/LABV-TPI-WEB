@@ -10,6 +10,10 @@ export interface DoctorQueryCleaned {
     unassigned?: boolean;
     specialty?: number | null;
 }
+export interface PatientQueryCleaned {
+    q: string;
+    status?: FilterStatus | null;
+}
 
 const filterQueryToFilterStatus = (str: string): FilterStatus | null => {
     switch(str) {
@@ -58,6 +62,23 @@ export const clearDoctorQuery = (q: string): DoctorQueryCleaned => {
         finalObj = { ...finalObj, unassigned: true };
         q = q.replace("-unassigned", "");
     }
+
+    q = q.trim();
+    return { ...finalObj, q };
+};
+
+
+export const clearPatientQuery = (q: string): PatientQueryCleaned => {
+    let clearQuery: string = "";
+    let finalObj: PatientQueryCleaned = { q };
+
+    // Status:
+    const statusRegex = /\bst:(\w+)/g; // st:inactive, st:active, st:all
+    const foo = ([...q.matchAll(statusRegex)][0]??[])[1];
+    const status: FilterStatus | null = !foo ? null : filterQueryToFilterStatus(foo);
+    if(status) finalObj = { ...finalObj, status };
+    q = q.replace(/\bst:\w+\s?/g, "");
+    // End of status.
 
     q = q.trim();
     return { ...finalObj, q };
