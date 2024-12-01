@@ -61,11 +61,13 @@ export const findByDNI = async (DNI: string): Promise<IPatient> => {
 };
 
 export const existsByDNI = async (DNI: string): Promise<boolean> => {
-    return u.head("patients/dni/" + DNI)
-        .then(response => response.ok)
-        .catch(err => {
-            throw err;
-        });
+    try {
+        const response: Response = await u.head(`patients/dni/${DNI}`);
+        return response.status == 200;
+    } catch(err) {
+        console.error(err);
+    }
+    return false;
 };
 
 /**

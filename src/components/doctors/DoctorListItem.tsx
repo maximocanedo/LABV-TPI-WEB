@@ -8,6 +8,9 @@ import {SpecialtyLink} from "../dialog-selectors/specialty/SpecialtyLink";
 import {UserLink} from "../dialog-selectors/users/UserLink";
 import {DoctorScheduleCollapsibleCell} from "../containers/commons/DoctorScheduleCollapsibleCell";
 import {Skeleton} from "../ui/skeleton";
+import {LocalDoctorContextMenu} from "./DoctorContextMenu";
+import {PatientMenu} from "../patients/PatientMenu";
+import { DoctorMenu } from "./DoctorMenu";
 
 export interface DoctorListItemProps {
     record: DoctorMinimalView | null;
@@ -48,7 +51,7 @@ export const DoctorListItem = ({ record, isLoading, viewMode, onClick, className
     if(!record) return <></>;
     const fullNameArr: string = record.surname + ", " + record.name;
     if(viewMode == ViewMode.LITTLE_CARDS) {
-        return <div className=" border rounded-lg pr-5 overflow-hidden ">
+        return <LocalDoctorContextMenu record={record}><div className=" border rounded-lg pr-5 overflow-hidden ">
             <TableRow selectable={false} className={"w-full" + (className??"")}>
                 <TableCell className={"w-[70px] text-center rounded bg-muted"}>{ record.file }</TableCell>
                 <TableCell className={"pl-4 grid" + (gridColsClass)}>
@@ -64,7 +67,7 @@ export const DoctorListItem = ({ record, isLoading, viewMode, onClick, className
                     </div>}
                 </TableCell>
             </TableRow>
-        </div>;
+        </div></LocalDoctorContextMenu>;
     }
     return (<TableRow selectable={false} className={"w-full " + (className??"")}>
         <TableCell className={"w-[70px] text-center"}>{ record.file }</TableCell>
@@ -87,5 +90,8 @@ export const DoctorListItem = ({ record, isLoading, viewMode, onClick, className
             <DoctorScheduleCollapsibleCell schedules={record.schedules??[]} />
         </TableCell>
         {viewMode === ViewMode.TABLE && <TableCell>{record.active ? "Habilitado" : "Deshabilitado"}</TableCell>}
+        <TableCell className={"w-[36px]"}>
+            <DoctorMenu {...record} />
+        </TableCell>
     </TableRow>);
 };

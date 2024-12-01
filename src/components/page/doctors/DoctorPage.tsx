@@ -27,6 +27,7 @@ import {RegularErrorPage} from "../commons/RegularErrorPage";
 import {CurrentDoctorContext} from "./CurrentDoctorContext";
 import { useLocalHistory } from "src/components/local/LocalHistoryContext";
 import { LinkedUserCard } from "./cards/LinkedUserCard";
+import {Skeleton} from "../../ui/skeleton";
 
 export interface DoctorPageProps {
 
@@ -84,14 +85,25 @@ export const DoctorPage = ({  }: DoctorPageProps) => {
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
-            {record && <CardContainer>
-                <BasicInfoCard />
-                <PrivateInfoCard />
-                <LinkedUserCard />
-                <CommunicationInfoCard />
-                <ScheduleChartCard />
-                <StateCard />
-            </CardContainer>}
+            <CardContainer>
+                {record && <>
+                    <BasicInfoCard />
+                    <PrivateInfoCard />
+                    <LinkedUserCard />
+                    <CommunicationInfoCard />
+                    <ScheduleChartCard />
+                    <StateCard />
+                </>}
+                {loading && <>
+                    <Skeleton className={"card h-24"} />
+                    <Skeleton className={"card h-36"} />
+                    <Skeleton className={"card h-32"} />
+                    <Skeleton className={"card h-52"} />
+                    <Skeleton className={"card h-48"} />
+                    <Skeleton className={"card h-24"} />
+                    <Skeleton className={"card h-36"} />
+                </>}
+            </CardContainer>
             { (!loading && err != null) && <RegularErrorPage {...err} retry={refresh} /> }
         </PageContent>
     </CurrentDoctorContext.Provider>);

@@ -25,6 +25,7 @@ import {BasicInfoCard} from "./cards/BasicInfoCard";
 import {CommunicationInfoCard} from "./cards/CommunicationInfoCard";
 import {PrivateInfoCard} from "./cards/PrivateInfoCard";
 import { StateCard } from "./cards/StateCard";
+import { Skeleton } from "src/components/ui/skeleton";
 
 export interface PatientPageProps {}
 export interface PatientPageParams extends Record<string, string> {
@@ -39,7 +40,8 @@ export const PatientPage = ({}: PatientPageProps) => {
         = useState<IPatient | Patient | null>(null);
     const [ err, setErr ]
         = useState<CommonException | null>(null);
-    const [ loading, setLoading ] = useState<boolean>(false);
+    const [ loading, setLoading ]
+        = useState<boolean>(true);
 
     useEffect(() => {
         if(record != null) patients.log(record);
@@ -81,12 +83,23 @@ export const PatientPage = ({}: PatientPageProps) => {
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
-            {record && <CardContainer>
+            <CardContainer>
+            {record && !loading && <>
                 <BasicInfoCard />
                 <CommunicationInfoCard />
                 <PrivateInfoCard />
                 <StateCard />
-            </CardContainer>}
+            </>}
+            {loading && <>
+                <Skeleton className={"card h-24"} />
+                <Skeleton className={"card h-36"} />
+                <Skeleton className={"card h-32"} />
+                <Skeleton className={"card h-52"} />
+                <Skeleton className={"card h-48"} />
+                <Skeleton className={"card h-24"} />
+                <Skeleton className={"card h-36"} />
+            </>}
+            </CardContainer>
         </PageContent>
     </CurrentPatientContext.Provider>)
 };

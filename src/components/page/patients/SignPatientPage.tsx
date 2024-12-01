@@ -12,8 +12,7 @@ import {
 } from "../../ui/breadcrumb";
 import React, {useState} from "react";
 import {PageContent} from "../commons/PageContent";
-import * as doctors from "../../../actions/doctors";
-import {Specialty} from "../../../entity/specialties";
+import * as patients from "../../../actions/patients";
 import {Button} from "../../ui/button";
 import {SpecialtyButtonSelector} from "../../dialog-selectors/specialty/SpecialtyButtonSelector";
 import {z} from "zod";
@@ -28,28 +27,21 @@ import {DatePicker} from "../../form/DatePicker";
 import { useNavigate } from "react-router-dom";
 import {useCurrentUser} from "../../users/CurrentUserContext";
 import {Checkbox} from "../../ui/checkbox";
-import * as users from "../../../actions/users";
 import {IUser} from "../../../entity/users";
 import { Spinner } from "src/components/form/Spinner";
 import {useToast} from "../../ui/use-toast";
 
-export interface SignDoctorPageProps { }
+export interface SignPatientPageProps { }
 
 const p = PhoneNumberUtil.getInstance();
 const schema = z.object({
     name: z.string().min(1, "El nombre no debe estar vacío. "),
     surname: z.string().min(1, "El apellido no debe estar vacío. "),
-    file: z.number(),
-    specialty: z
-        .object({ name: z.string(), id: z.number(), description: z.string(), active: z.boolean() })
-        .refine(x => x != null, "La especialidad no puede estar vacía. ")
-        .refine(x => x.active, "Elija una especialidad habilitada. "),
-    user: z
-        .object({ username: z.string(), active: z.boolean() })
-        .refine(x => x.active, "Elija un usuario habilitado. "),
-    sex: z.enum(["M", "F"]),
-    birth: z.date(),
-    localty: z.string(),
+    dni: z.string({ required_error: "Campo requerido" }).regex(/^[0-9]+$/, "Ingrese su D.N.I., sin puntos ni guiones. "),
+    birth: z.date({ required_error: "Campo requerido" }),
+    address: z.string({ required_error: "Campo requerido" }),
+    localty: z.string({ required_error: "Campo requerido" }),
+    province: z.string({ required_error: "Campo requerido" }),
     email: z.string().email("Ingrese una dirección de correo electrónico válida. "),
     phone: z.string().superRefine((value, ctx) => {
         try {
@@ -68,21 +60,22 @@ const schema = z.object({
         return p.format(phone, PhoneNumberFormat.INTERNATIONAL);
     })
 }).superRefine(async (data, ctx) => {
-    const takenFile = await doctors.existsByFile(data.file);
+    const takenFile = await patients.existsByDNI(data.dni);
     if (takenFile) {
         ctx.addIssue({
             code: "custom",
-            path: ["file"],
-            message: "Este legajo ya está en uso por otro médico."
+            path: ["dni"],
+            message: "Este paciente ya está registrado."
         });
     }
 });
 
 
 
-export const SignDoctorPage = ({}: SignDoctorPageProps) => {
+export const SignPatientPage = ({}: SignPatientPageProps) => {
 
-    const [ loading, setLoading ] = useState<boolean>(false);
+    const [ loading, setLoading ]
+        = useState<boolean>(false);
     const navigate = useNavigate();
     const { me } = useCurrentUser();
     const toast = useToast();
@@ -92,12 +85,11 @@ export const SignDoctorPage = ({}: SignDoctorPageProps) => {
         defaultValues: {
             name: "",
             surname: "",
-            file: 0,
-            specialty: undefined,
-            user: undefined,
-            sex: 'M',
+            dni: "",
+            address: "",
             birth: undefined,
             localty: "",
+            province: "",
             email: "",
             phone: ""
         }
@@ -105,14 +97,14 @@ export const SignDoctorPage = ({}: SignDoctorPageProps) => {
 
     const onSubmit = (values: z.infer<typeof schema>): void => {
         setLoading(true);
-        doctors.create({
+        patients.create({
             ...values
         })
             .then(x => {
                 toast.toast({
-                    title: "Médico creado exitosamente"
+                    title: "Paciente creado exitosamente"
                 });
-                navigate(`/doctors/${x.file}`)
+                navigate(`/patients/${x.id}`)
             })
             .catch(err => {
                 toast.toast({
@@ -139,18 +131,18 @@ export const SignDoctorPage = ({}: SignDoctorPageProps) => {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator/>
                 <BreadcrumbItem>
-                    <BreadcrumbLink href="/doctors">Médicos</BreadcrumbLink>
+                    <BreadcrumbLink href="/patients">Pacientes</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator/>
                 <BreadcrumbItem>
-                    <BreadcrumbPage>Registrar un nuevo médico</BreadcrumbPage>
+                    <BreadcrumbPage>Registrar un nuevo paciente</BreadcrumbPage>
                 </BreadcrumbItem>
             </BreadcrumbList>
         </Breadcrumb>
         <div className={"w-full flex justify-center "}>
             <Form {...form}>
                 <form className={"w-full max-w-[700px] grid grid-cols-2 gap-6 gap-x-8 justify-center"} onSubmit={form.handleSubmit(onSubmit)} >
-                    <h2 className={"text-3xl text-center font-bold col-span-2"}>Registrar médico</h2>
+                    <h2 className={"text-3xl text-center font-bold col-span-2"}>Registrar paciente</h2>
                     <FormField
                         control={form.control}
                         name="name"
@@ -175,63 +167,50 @@ export const SignDoctorPage = ({}: SignDoctorPageProps) => {
                             <FormMessage/>
                         </FormItem>)}
                     />
-
                     <FormField
                         control={form.control}
-                        name="file"
+                        name="dni"
                         disabled={loading}
                         render={({field}) => (<FormItem>
-                            <FormLabel>N.º de legajo</FormLabel>
+                            <FormLabel>D.N.I. N.º</FormLabel>
                             <FormControl>
-                                <Input type={"number"} step={1} {...field}
-                                       onChange={(e) => {
-                                           const valueAsNumber = e.target.valueAsNumber?? Number(e.target.value);
-                                           field.onChange(valueAsNumber);
-                                       }} />
+                                <Input type={"text"} inputMode={"numeric"} {...field} />
                             </FormControl>
                             <FormMessage/>
                         </FormItem>)}
                     />
                     <FormField
                         control={form.control}
-                        name="specialty"
+                        name="address"
                         disabled={loading}
                         render={({field}) => (<FormItem>
-                            <FormLabel>Especialidad</FormLabel>
+                            <FormLabel>Dirección</FormLabel>
                             <FormControl>
-                                <SpecialtyButtonSelector disabled={loading} value={field.value?? undefined} onChange={field.onChange} nullable={false}/>
+                                <Input {...field} />
                             </FormControl>
                             <FormMessage/>
                         </FormItem>)}
                     />
                     <FormField
                         control={form.control}
-                        name="sex"
+                        name="localty"
                         disabled={loading}
                         render={({field}) => (<FormItem>
-                            <FormLabel>Sexo</FormLabel>
+                            <FormLabel>Localidad</FormLabel>
                             <FormControl>
-                                <Select disabled={loading} value={field.value} onValueChange={field.onChange}>
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Sexo"/>
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="M">Masculino</SelectItem>
-                                        <SelectItem value="F">Femenino</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                                <Input {...field} />
                             </FormControl>
                             <FormMessage/>
                         </FormItem>)}
                     />
                     <FormField
                         control={form.control}
-                        name="birth"
+                        name="province"
                         disabled={loading}
                         render={({field}) => (<FormItem>
-                            <FormLabel>Fecha de nacimiento</FormLabel>
+                            <FormLabel>Provincia</FormLabel>
                             <FormControl>
-                                <DatePicker {...field} />
+                                <Input {...field} />
                             </FormControl>
                             <FormMessage/>
                         </FormItem>)}
@@ -263,44 +242,20 @@ export const SignDoctorPage = ({}: SignDoctorPageProps) => {
                     />
                     <FormField
                         control={form.control}
-                        name="user"
+                        name="birth"
                         disabled={loading}
                         render={({field}) => (<FormItem>
-                            <FormLabel>Usuario asociado</FormLabel>
+                            <FormLabel>Fecha de nacimiento</FormLabel>
                             <FormControl>
-                                { /** @ts-ignore */}
-                                <UserButtonSelector
-                                    disabled={loading || linkMe}
-                                    { /** @ts-ignore */...{} }
-                                    value={linkMe ? me as IUser : field.value}
-                                    onChange={field.onChange}
-                                    nullable={false} />
+                                <DatePicker {...field} />
                             </FormControl>
                             <FormMessage/>
-                            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md p-2 ">
-                                <FormControl>
-                                    <Checkbox disabled={loading} id="terms" value={linkMe ? "on" : "off"} onCheckedChange={(x) => {
-                                        if (x === "indeterminate") setLinkMe(false)
-                                        else {
-                                            setLinkMe(x)
-                                            if(x) field.onChange(me as IUser)
-                                        }
-                                    }}/>
-                                </FormControl>
-                                <label htmlFor={"terms"} className="leading-none space-y-2">
-                                    <FormLabel>Vincular mi cuenta</FormLabel>
-                                    { linkMe && me.doctor && <FormDescription>
-                                        Esto desvinculará el doctor actual.
-                                    </FormDescription>}
-                                </label>
-                            </FormItem>
                         </FormItem>)}
                     />
-
                     <div className="flex flex-1 mt-4 justify-center items-center col-span-2">
                         <Button disabled={loading} type={"submit"}>
-                            {loading && <Spinner className={"w-[12px] h-[12px] mr-2"}/>}
-                            {!loading ? "Continuar" : "Creando médico"}</Button>
+                            {loading && <Spinner className={"w-[12px] h-[12px] mr-2"} />}
+                            {!loading ? "Continuar" : "Creando paciente"}</Button>
                     </div>
                     <div className={"h-[150px]"}></div>
                 </form>
@@ -309,6 +264,6 @@ export const SignDoctorPage = ({}: SignDoctorPageProps) => {
 
 
     </PageContent>
-        </>
-    )
+    </>
+)
 }
