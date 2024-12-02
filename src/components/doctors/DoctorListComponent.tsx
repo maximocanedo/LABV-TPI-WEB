@@ -16,15 +16,16 @@ export interface DoctorListComponentProps {
     selectable?: boolean;
     selected?: IDoctor | null;
     className?: string;
+    selector?: boolean;
 }
 
-export const DoctorListComponent = ({ viewMode, items, onClick, loading, className }: DoctorListComponentProps) => {
+export const DoctorListComponent = ({ viewMode, items, onClick, loading, className, selector }: DoctorListComponentProps) => {
     const { me, can } = useCurrentUser();
 
     const canFilterByStatus: boolean = can(Permits.DISABLE_DOCTOR);
     const whenTable: boolean = viewMode === ViewMode.TABLE;
     const elements = items.map((result: DoctorMinimalView) =>
-        <DoctorListItem record={result} className={""} onClick={onClick} viewMode={viewMode} isLoading={loading} />)
+        <DoctorListItem selector={selector?? false} record={result} className={""} onClick={onClick} viewMode={viewMode} isLoading={loading} />)
 
     if(viewMode === ViewMode.LITTLE_CARDS) {
         return <div className="w-full flex justify-start gap-2">
@@ -39,7 +40,7 @@ export const DoctorListComponent = ({ viewMode, items, onClick, loading, classNa
                 <TableHead className={"w-[70px] text-center"}>Legajo</TableHead>
                 <TableHead>{ whenTable && "Nombre completo" }</TableHead>
                 { whenTable && <TableHead>Especialidad</TableHead> }
-                <TableHead>Horarios</TableHead>
+                {!selector && <TableHead>Horarios</TableHead>}
                 { (whenTable && canFilterByStatus) && <TableHead>Estado</TableHead> }
             </TableRow>
         </TableHeader>

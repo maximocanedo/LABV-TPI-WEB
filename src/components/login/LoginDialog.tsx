@@ -57,6 +57,9 @@ export const LoginDialog = ({ update }: any) => {
                 }
             }).catch(err => {
                 setOK(false);
+                if(err.path == "err/invalid-credentials") {
+                    setErr("Credenciales inválidas");
+                }
                 console.log({err});
             }).finally(() => {
                 setLoading(false);
@@ -76,7 +79,6 @@ export const LoginDialog = ({ update }: any) => {
                     </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4">
-                    {!loading && <>
                         <div className="grid gap-2">
                             <Label htmlFor="email">Nombre de usuario</Label>
                             <Input
@@ -89,7 +91,7 @@ export const LoginDialog = ({ update }: any) => {
                                 disabled={loading}
                                 className={""}
                             />
-                            {!ok && <span className={"text-sm text-destructive"}>{err}</span>}
+                            {(err.length > 0) && <span className={"text-sm text-destructive"}>{err}</span>}
                         </div>
                         <div className="grid gap-2">
                             <div className="flex items-center">
@@ -103,12 +105,6 @@ export const LoginDialog = ({ update }: any) => {
                                 onChange={e => setPassword(e.target.value)}
                                 required/>
                         </div>
-                    </>}
-                    {loading&&<div className="grid gap-4">
-                        <div className="grid place-items-center">
-                            <div className={"flex items-center"}><Spinner className={"p-1 m-1"} /> Iniciando sesión como @{username}</div>
-                        </div>
-                    </div>}
                     <Button disabled={loading || !valid} onClick={tryLogin} type="submit" className="w-full">
                         { loading && <Spinner className={"p-1 m-1"} /> }
                         { loading ? "Ingresando" : "Iniciar sesión" }

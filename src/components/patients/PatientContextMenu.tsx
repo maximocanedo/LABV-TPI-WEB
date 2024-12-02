@@ -11,7 +11,7 @@ export interface LocalContextMenuProps {
     items: MenuOption[];
 }
 const tp = (phone: string): string => {
-    return phone.replaceAll("-","").replaceAll(" ","");
+    return !phone ? "" : phone.replaceAll("-","").replaceAll(" ","");
 };
 
 

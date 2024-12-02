@@ -16,6 +16,7 @@ import { IDoctor, weekday } from "src/entity/doctors";
 import { DoctorCommandQuery } from "src/components/commands/DoctorCommandQuery";
 import { DoctorQueryCleaned } from "src/actions/query.utils";
 import { Specialty } from "src/entity/specialties";
+import {PaginatorButton} from "../../buttons/commons/PaginatorButton";
 
 /**
  * Componente diálogo de selector de especialidades. NO incluye el trigger.
@@ -28,33 +29,44 @@ export interface DoctorSelectorProps {
     onOpenChange: (open: boolean) => void;
     children: React.ReactNode;
     nullable?: boolean;
+    specialty?: Specialty | null;
+    unassigned?: boolean;
 }
 
-export const DoctorSelector = ({ value, onChange, open, onOpenChange, children, nullable }: DoctorSelectorProps) => {
+export const DoctorSelector = ({ value, onChange, open, onOpenChange, children, nullable, specialty, unassigned }: DoctorSelectorProps) => {
     const { me, can } = useCurrentUser();
     const [selected, setSelected] = useState<IDoctor | null>(value);
     const [ query, setQuery ] = useState<string>("");
     const [day, setDay] = useState<weekday | null>(null);
     const [checkUnassigned, setCheckUnassigned] = useState<boolean>(false);
-    const [specialty, setSpecialty] = useState<Specialty | null>(null);
     const [ loading, setLoadingState ] = useState<boolean>(false);
     const [ status, setStatus ] = useState<FilterStatus>(FilterStatus.ONLY_ACTIVE);
     const [ results, dispatchResults ] = useReducer(useListingBasicReducer<IDoctor>, []);
     const { add, clear, prepend } = useDispatchers<IDoctor>(dispatchResults);
 
+    useEffect(() => {
+        if(!!value && !!specialty && value.specialty.id == specialty.id) {}
+        else {
+            onChange(null);
+            execSearch(true);
+        }
+    }, [specialty]);
 
     useEffect(() => {
-        setSelected(value);
+        if(selected != value) setSelected(value);
     }, [ value ]);
 
     useEffect(() => {
-        onChange(selected);
+        if(value != selected) onChange(selected);
     }, [ selected ]);
 
     const canFilter: boolean = can(Permits.DISABLE_DOCTOR) || can(Permits.ENABLE_DOCTOR);
     const getQuery = (): doctors.Query => {
-        let x = new doctors.Query(query).filterByStatus(status);
-        x.filterByUnassigned(true);
+        let x = new doctors.Query(query)
+            .filterByStatus(status);
+        x.filterByUnassigned(unassigned ?? true);
+        x.fromSelector = true;
+        x.filterBySpecialty(specialty ? { id: specialty.id } : null);
         return x;
     };
     
@@ -116,7 +128,7 @@ export const DoctorSelector = ({ value, onChange, open, onOpenChange, children, 
                     <div className="w-full"></div>
                 </div>
                 {(loading || results.length > 0) && <div className={"pt-4 w-full h-fit h-[300px] overflow-y-scroll max-h-[300px]"}>
-                    <DoctorListComponent selectable={true} selected={selected} className={"w-full h-full"} viewMode={ViewMode.COMFY} loading={loading} items={results} onClick={(specialty) => {
+                    <DoctorListComponent selectable={true} selected={selected} className={"w-full h-full"} viewMode={ViewMode.COMFY} selector={true} loading={loading} items={results} onClick={(specialty) => {
                         if(value != null && value.id === specialty.id && (nullable??true)) setSelected(null);
                         else {
                             setSelected(specialty);
@@ -125,6 +137,7 @@ export const DoctorSelector = ({ value, onChange, open, onOpenChange, children, 
                             // setOpen(false);
                         }
                     }}/>
+                    <PaginatorButton loading={loading} len={results.length} handler={next} />
                 </div>}
                 {(!loading && results.length === 0) && <div className={"grid"}>
 

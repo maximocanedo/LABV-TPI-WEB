@@ -18,9 +18,10 @@ export interface DoctorListItemProps {
     viewMode?: ViewMode;
     onClick: (record: DoctorMinimalView) => void;
     className?: string;
+    selector?: boolean;
 }
 
-export const DoctorListItem = ({ record, isLoading, viewMode, onClick, className }: DoctorListItemProps) => {
+export const DoctorListItem = ({ record, isLoading, viewMode, onClick, className, selector }: DoctorListItemProps) => {
 
     if((!record && !isLoading)) {
         return <></>;
@@ -86,12 +87,12 @@ export const DoctorListItem = ({ record, isLoading, viewMode, onClick, className
         </TableCell>}
         {viewMode === ViewMode.TABLE && <TableCell className={"text-sm font-medium text-gray-900 truncate dark:text-white hover:underline cursor-pointer"} onClick={() => onClick(record)}>{ fullNameArr }</TableCell>}
         {viewMode === ViewMode.TABLE && <TableCell><SpecialtyLink record={record.specialty} /></TableCell>}
-        <TableCell>
-            <DoctorScheduleCollapsibleCell schedules={record.schedules??[]} />
-        </TableCell>
+        {!selector && <TableCell>
+            <DoctorScheduleCollapsibleCell schedules={record.schedules ?? []}/>
+        </TableCell>}
         {viewMode === ViewMode.TABLE && <TableCell>{record.active ? "Habilitado" : "Deshabilitado"}</TableCell>}
-        <TableCell className={"w-[36px]"}>
+        {!selector && <TableCell className={"w-[36px]"}>
             <DoctorMenu {...record} />
-        </TableCell>
+        </TableCell>}
     </TableRow>);
 };

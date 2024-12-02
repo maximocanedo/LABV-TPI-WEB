@@ -1,7 +1,7 @@
 'use strict';
 
 import {Specialty} from "../../../entity/specialties";
-import {Filter} from "lucide-react";
+import {BriefcaseMedical, Filter, Stethoscope} from "lucide-react";
 import {Button} from "../../ui/button";
 import {SpecialtySelector} from "./SpecialtySelector";
 import {useEffect, useState} from "react";
@@ -28,10 +28,10 @@ export const SpecialtyButtonSelector = ({value, onChange: setValue, disabled, cl
                     type={"button"}
                     aria-expanded={open}
                     className={"max-w-full w-full justify-between " + className?? ""}>
-                <span className="sr-only sm:not-sr-only text-nowrap whitespace-nowrap">{
+                <BriefcaseMedical className={"mr-2 h-[16px] w-[16px] min-h-[16px] min-w-[16px] "}/>
+                <span className=" text-nowrap whitespace-nowrap overflow-hidden text-ellipsis text-start max-w-full w-[80%]">{
                     value != null ? value.name : "Seleccione una especialidad"
                 }</span>
-                <div className="w-full"></div>
                 <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
         </SpecialtySelector>

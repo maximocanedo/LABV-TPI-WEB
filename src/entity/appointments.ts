@@ -9,10 +9,11 @@ import {
 } from "./patients";
 import {Deletable, Identifiable, Saveable} from "./commons";
 
-export type AppointmentStatus = 'PRESENT' | 'ABSENT' | 'PENDING';
+export type AppointmentStatus = 'PRESENT' | 'ABSENT' | 'PENDING' | 'CANCELLED';
 
 export interface AppointmentRegistrationRequest {
     date: Date;
+    remarks: string;
     doctor: IdentifiableDoctor; // TODO AssignedDoctor prop here.
     patient: IdentifiablePatient;
 }
@@ -22,21 +23,21 @@ export interface AppointmentBasicProps {
 }
 export interface AppointmentBasicDoctorAndPatientProps {
     date: Date;
-    doctor: IDoctor;
+    assignedDoctor: IDoctor;
     patient: IPatient;
 }
 export interface IAppointment extends Identifiable, Deletable, Saveable, AppointmentBasicProps, AppointmentBasicDoctorAndPatientProps {
 
 }
 export type AppointmentMinimalView = IAppointment & {
-    doctor: DoctorMinimalView;
+    assignedDoctor: DoctorMinimalView;
     patient: PatientMinimalView;
 };
 export type AppointmentCommunicationView = IAppointment & {
-    doctor: DoctorMinimalView;
+    assignedDoctor: DoctorMinimalView;
     patient: PatientCommunicationView;
 };
 export type Appointment = IAppointment & {
-    doctor: Doctor;
+    assignedDoctor: Doctor;
     patient: Patient;
 }

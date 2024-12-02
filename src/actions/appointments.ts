@@ -183,3 +183,7 @@ export const getAvailableSchedules = async (doctorFile: number, date: Date): Pro
         .then(schedule => schedule.map((z: string[]) => z.map((zz: string) => ('0' + zz).slice(-2)).join(":")))
         .catch(console.error);
 };
+// @ts-ignore
+window.getAvailableDates = getAvailableDates;
+// @ts-ignore
+window.getAvailableSchedules = getAvailableSchedules;

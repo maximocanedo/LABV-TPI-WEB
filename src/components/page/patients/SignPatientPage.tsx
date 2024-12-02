@@ -108,7 +108,7 @@ export const SignPatientPage = ({}: SignPatientPageProps) => {
             })
             .catch(err => {
                 toast.toast({
-                    title: err?.title?? "Error al intentar crear un médico. ",
+                    title: err?.title?? "Error al intentar crear un paciente. ",
                     description: err?.message,
                     variant: "destructive"
                 });

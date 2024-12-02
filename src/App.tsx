@@ -28,6 +28,9 @@ import {SignDoctorPage} from "./components/page/doctors/SignDoctorPage";
 import {PatientPage} from "./components/page/patients/PatientPage";
 import {PatientsMainPage} from "./components/page/patients/PatientsMainPage";
 import {SignPatientPage} from "./components/page/patients/SignPatientPage";
+import {TestPage} from "./components/TestPage";
+import {AppointPage} from "./components/page/appointments/AppointPage";
+import {AppointmentPage} from "./components/page/appointments/AppointmentPage";
 
 export type CurrentUser = User | null | "loading";
 
@@ -79,8 +82,11 @@ const App: React.FC = () => {
                         <Route path={"/patients/new"} element={<SignPatientPage />} />
                         <Route path={"/patients/:id"} element={<PatientPage />} />
 
-                        <Route path={"/reports"} element={<MainReportPage />} />
+                        <Route path={"/appointments/new"} element={<AppointPage />} />
+                        <Route path={"/appointments/:id"} element={<AppointmentPage />} />
 
+                        <Route path={"/reports"} element={<MainReportPage />} />
+                        <Route path={"/test"} element={<TestPage />} />
                     </Routes>
                 </div>
             </div>

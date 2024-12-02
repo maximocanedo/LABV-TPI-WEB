@@ -7,6 +7,7 @@ import {IUser} from "../../entity/users";
 import { Identifiable } from 'src/entity/commons';
 import { IDoctor } from 'src/entity/doctors';
 import {IPatient} from "../../entity/patients";
+import {IAppointment} from "../../entity/appointments";
 
 interface LocalHistoryContextManager<T extends {}> {
     history: T[];
@@ -19,6 +20,7 @@ interface LocalHistoryContextType {
     users: LocalHistoryContextManager<IUser>;
     doctors: LocalHistoryContextManager<IDoctor>;
     patients: LocalHistoryContextManager<IPatient>;
+    appointments: LocalHistoryContextManager<IAppointment>;
 }
 
 const LocalHistoryContext = createContext<LocalHistoryContextType | undefined>(undefined);
@@ -80,19 +82,23 @@ export const LocalHistoryContextProvider: React.FC<{ children: ReactNode }> = ({
     const [ h_users, reduceUsers ] = useReducer(ur, []);
     const [ d_doctors, reduceDoctors ] = useReducer(identifiableReducer<IDoctor>, []);
     const [ p_patients, reducePatients ] = useReducer(identifiableReducer<IPatient>, []);
+    const [ a_appointments, reduceAppointments ] = useReducer(identifiableReducer<IAppointment>, []);
 
     const logUser = (payload: IUser) => reduceUsers({ type: ActionType.LOG, payload });
     const clearUsers = () => reduceUsers({ type: ActionType.CLEAR, payload: null });
     const remUser = (payload: IUser) => reduceUsers({ type: ActionType.REMOVE, payload });
 
+
     const doctors = reduce<IDoctor>(reduceDoctors);
     const patients = reduce<IPatient>(reducePatients);
+    const appointments = reduce<IAppointment>(reduceAppointments);
 
     return (
         <LocalHistoryContext.Provider value={{ 
             users: { history: h_users, log: logUser, clear: clearUsers, rem: remUser },
             doctors: { history: d_doctors, ...doctors },
-            patients: { history: p_patients, ...patients }
+            patients: { history: p_patients, ...patients },
+            appointments: { history: a_appointments, ...appointments }
             }}>
             {children}
         </LocalHistoryContext.Provider>
@@ -102,7 +108,7 @@ export const LocalHistoryContextProvider: React.FC<{ children: ReactNode }> = ({
 export const useLocalHistory = (): LocalHistoryContextType => {
     const context = useContext(LocalHistoryContext);
     if (!context) {
-        throw new Error("useCurrentUser must be used within a LocalHistoryContextProvider");
+        throw new Error("useLocalHistory must be used within a LocalHistoryContextProvider");
     }
     return context;
 };
