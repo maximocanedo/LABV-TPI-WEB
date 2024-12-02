@@ -1,7 +1,8 @@
 'use strict';
 
 import {FilterStatus} from "./commons";
-import {weekday} from "../entity/doctors";
+import {IDoctor, weekday} from "../entity/doctors";
+import {IPatient} from "../entity/patients";
 
 export interface DoctorQueryCleaned {
     q: string;
@@ -14,6 +15,30 @@ export interface PatientQueryCleaned {
     q: string;
     status?: FilterStatus | null;
 }
+export interface AppointmentQueryCleaned {
+    q: string;
+    status?: FilterStatus | null;
+    date?: Date | null;
+    limit?: Date | null;
+    patient?: IPatient | null;
+    doctor?: IDoctor | null;
+}
+
+export const clearAppointmentQuery = (q: string, other: Omit<AppointmentQueryCleaned, "q">): AppointmentQueryCleaned => {
+    let clearQuery: string = "";
+    let finalObj: AppointmentQueryCleaned = { ...other, q };
+
+    // Status:
+    const statusRegex = /\bst:(\w+)/g; // st:inactive, st:active, st:all
+    const foo = ([...q.matchAll(statusRegex)][0]??[])[1];
+    const status: FilterStatus | null = !foo ? null : filterQueryToFilterStatus(foo);
+    if(status) finalObj = { ...finalObj, status };
+    q = q.replace(/\bst:\w+\s?/g, "");
+    // End of status.
+
+    q = q.trim();
+    return { ...finalObj, q };
+};
 
 const filterQueryToFilterStatus = (str: string): FilterStatus | null => {
     switch(str) {
