@@ -9,19 +9,20 @@ import {ViewMode} from "../../buttons/ViewModeControl";
 import {ArrowRightIcon} from "@radix-ui/react-icons";
 import {PatientListComponent} from "../../patients/PatientListComponent";
 import {HomeRecordHistoryWidgetContainer} from "./HomeRecordHistoryWidgetContainer";
+import {UserListComponent} from "../../users/UserListComponent";
 
-export const DoctorsCard = () => {
-    const { doctors } = useLocalHistory();
+export const SpeCard = () => {
+    const { users } = useLocalHistory();
     const navigate = useNavigate();
 
-    if(doctors.history.length == 0) return <></>;
+    if(users.history.length == 0) return <></>;
     return <HomeRecordHistoryWidgetContainer
-                title={"Médicos"}
+                title={"Usuarios"}
                 description={"Últimos registros visitados"}
-                onClick={() => navigate("/doctors")}
+                onClick={() => navigate("/users")}
             >
-        <DoctorListComponent loading={false} onClick={x => {
-            navigate(`/doctors/${x.file}`)
-        }} viewMode={ViewMode.LITTLE_CARDS} items={doctors.history} />
+        <UserListComponent loading={false} onClick={x => {
+            navigate(`/users/${x.username}`)
+        }} viewMode={ViewMode.LITTLE_CARDS} items={users.history} />
     </HomeRecordHistoryWidgetContainer>;
 };

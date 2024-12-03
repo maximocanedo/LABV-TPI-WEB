@@ -9,6 +9,8 @@ import {CardContainer} from "../containers/commons/CardContainer";
 import {CancelledCard} from "./widgets/CancelledCard";
 import {DoctorsCard} from "./widgets/DoctorsCard";
 import {PatientsCard} from "./widgets/PatientsCard";
+import {AppointmentsCard} from "./widgets/AppointmentsCard";
+import {SpeCard} from "./widgets/SpeCard";
 
 export interface HomePageProps {}
 
@@ -19,13 +21,21 @@ export const HomePage = ({}: HomePageProps) => {
         <Header>
         </Header>
         <PageContent className={" px-0 "}>
-            <CardContainer className={" px-0 sm:px-0 "}>
-                <ReportCountApposByDayBetweenDates />
-                <ReportCountApposBySpecialty />
-                <CancelledCard />
-            </CardContainer>
-            <DoctorsCard />
-            <PatientsCard />
+            <div className={"flex flex-row gap-x-2 px-0 sm:px-0 items-start"}>
+                <div className={"flex-1 basis-1/3"}>
+                    <ReportCountApposByDayBetweenDates/>
+                </div>
+                <div className={"flex-1 basis-1/3"}>
+                    <ReportCountApposBySpecialty/>
+                </div>
+                <div className={"flex-1 basis-1/3"}>
+                    <CancelledCard/>
+                </div>
+            </div>
+            <AppointmentsCard />
+            <DoctorsCard/>
+            <PatientsCard/>
+            <SpeCard />
         </PageContent>
     </>;
 };

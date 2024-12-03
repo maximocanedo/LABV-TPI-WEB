@@ -9,19 +9,21 @@ import {ViewMode} from "../../buttons/ViewModeControl";
 import {ArrowRightIcon} from "@radix-ui/react-icons";
 import {PatientListComponent} from "../../patients/PatientListComponent";
 import {HomeRecordHistoryWidgetContainer} from "./HomeRecordHistoryWidgetContainer";
+import {Appointments} from "../appointments/Appointments";
+import { AppointmentListComponent } from "../appointments/AppointmentListComponent";
 
-export const DoctorsCard = () => {
-    const { doctors } = useLocalHistory();
+export const AppointmentsCard = () => {
+    const { appointments } = useLocalHistory();
     const navigate = useNavigate();
 
-    if(doctors.history.length == 0) return <></>;
+    if(appointments.history.length == 0) return <></>;
     return <HomeRecordHistoryWidgetContainer
-                title={"Médicos"}
+                title={"Turnos"}
                 description={"Últimos registros visitados"}
-                onClick={() => navigate("/doctors")}
+                onClick={() => navigate("/appointments")}
             >
-        <DoctorListComponent loading={false} onClick={x => {
-            navigate(`/doctors/${x.file}`)
-        }} viewMode={ViewMode.LITTLE_CARDS} items={doctors.history} />
+        <AppointmentListComponent loading={false} onClick={x => {
+            navigate(`/appointments/${x.id}`)
+        }} viewMode={ViewMode.LITTLE_CARDS} items={appointments.history} />
     </HomeRecordHistoryWidgetContainer>;
 };
