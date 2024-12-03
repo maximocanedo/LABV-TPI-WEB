@@ -30,7 +30,7 @@ export const CancelledCard = () => {
             <CardDescription>En el año {year}. </CardDescription>
         </CardHeader>
         {!loading && <CardContent>
-            <h1 className={"text-6xl text-center"}>{count}</h1>
+            <h1 className={"text-6xl text-center"}>{(count.length > 4 ? "" : count)}</h1>
         </CardContent>}
         <CardFooter className={"flex-row justify-between"}>
             <Input
