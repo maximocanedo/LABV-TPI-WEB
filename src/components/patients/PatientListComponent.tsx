@@ -16,9 +16,10 @@ export interface PatientListComponentProps {
     selectable?: boolean;
     selected?: IPatient | null;
     className?: string;
+    vertical?: boolean;
 }
 
-export const PatientListComponent = ({ viewMode, items, onClick, loading, className }: PatientListComponentProps) => {
+export const PatientListComponent = ({ viewMode, items, onClick, loading, className, vertical }: PatientListComponentProps) => {
     const { me, can } = useCurrentUser();
 
     const canFilterByStatus: boolean = can(Permits.DISABLE_DOCTOR);
@@ -27,7 +28,7 @@ export const PatientListComponent = ({ viewMode, items, onClick, loading, classN
         <PatientListItem record={result} className={""} onClick={onClick} viewMode={viewMode} isLoading={loading} />)
 
     if(viewMode === ViewMode.LITTLE_CARDS) {
-        return <div className="w-full flex justify-start gap-2">
+        return <div className={"w-full flex " + ((vertical ?? false) ? "flex-col" : "") + " justify-start gap-2"}>
             {elements}
         </div>;
     }

@@ -6,6 +6,9 @@ import {PageContent} from "./commons/PageContent";
 import {ReportCountApposByDayBetweenDates} from "./widgets/ReportCountApposByDayBetweenDates";
 import {ReportCountApposBySpecialty} from "./widgets/ReportCountApposBySpecialty";
 import {CardContainer} from "../containers/commons/CardContainer";
+import {CancelledCard} from "./widgets/CancelledCard";
+import {DoctorsCard} from "./widgets/DoctorsCard";
+import {PatientsCard} from "./widgets/PatientsCard";
 
 export interface HomePageProps {}
 
@@ -16,10 +19,13 @@ export const HomePage = ({}: HomePageProps) => {
         <Header>
         </Header>
         <PageContent className={" px-0 "}>
-            <CardContainer className={" px-0 sm:px-2 "}>
+            <CardContainer className={" px-0 sm:px-0 "}>
                 <ReportCountApposByDayBetweenDates />
                 <ReportCountApposBySpecialty />
+                <CancelledCard />
             </CardContainer>
+            <DoctorsCard />
+            <PatientsCard />
         </PageContent>
     </>;
 };

@@ -17,9 +17,10 @@ export interface DoctorListComponentProps {
     selected?: IDoctor | null;
     className?: string;
     selector?: boolean;
+    vertical?: boolean;
 }
 
-export const DoctorListComponent = ({ viewMode, items, onClick, loading, className, selector }: DoctorListComponentProps) => {
+export const DoctorListComponent = ({ viewMode, items, onClick, loading, className, selector, vertical }: DoctorListComponentProps) => {
     const { me, can } = useCurrentUser();
 
     const canFilterByStatus: boolean = can(Permits.DISABLE_DOCTOR);
@@ -28,7 +29,7 @@ export const DoctorListComponent = ({ viewMode, items, onClick, loading, classNa
         <DoctorListItem selector={selector?? false} record={result} className={""} onClick={onClick} viewMode={viewMode} isLoading={loading} />)
 
     if(viewMode === ViewMode.LITTLE_CARDS) {
-        return <div className="w-full flex justify-start gap-2">
+        return <div className={"w-full flex " + ((vertical ?? false)?"flex-col":"") +  " justify-start gap-2"}>
             {elements}
         </div>;
     }
