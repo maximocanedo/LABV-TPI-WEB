@@ -48,7 +48,7 @@ export const ExportButton = <T,>({ handler, records }: ExportButtonProps<T>) => 
 
     return <DropdownMenu>
         <DropdownMenuTrigger asChild>
-            <Button variant={"outline"} disabled={!records} size={"sm"} className={"h-7 gap-1 text-sm ml-auto" }>
+            <Button variant={"outline"} disabled={!records || records.length == 0} size={"sm"} className={"h-7 gap-1 text-sm ml-auto" }>
                 <CloudDownload className={"h-3.5 w-3.5"}/>
                 <span className="sr-only sm:not-sr-only text-xs">Exportar</span>
             </Button>

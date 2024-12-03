@@ -1,7 +1,7 @@
 'use strict';
 
 import {TabLink} from "../../buttons/TabLink";
-import {CalendarDays, ChartColumn, Home, NotebookTabs, Stethoscope, Users} from "lucide-react";
+import {BriefcaseMedical, CalendarDays, ChartColumn, Home, NotebookTabs, Stethoscope, Users} from "lucide-react";
 import React, {useEffect, useState} from "react";
 import {resolveLocalUrl, WEB_PREFIX} from "../../../auth";
 import {useLocation} from "react-router";
@@ -21,6 +21,7 @@ export const LateralMenu = (props: LateralMenuProps) => {
     const [home, setHome] = useState<boolean>(cur("home"));
     const [appointments, setAppointments] = useState<boolean>(cur("appointments"));
     const [doctors, setDoctors] = useState<boolean>(cur("doctors"));
+    const [specialties, setSpecialties] = useState<boolean>(cur("specialties"));
     const [patients, setPatients] = useState<boolean>(cur("patients"));
     const [users, setUsers] = useState<boolean>(cur("users"));
     const [reports, setReports] = useState<boolean>(cur("reports"));
@@ -29,6 +30,7 @@ export const LateralMenu = (props: LateralMenuProps) => {
     const updateState = () => {
         setAppointments(cur("appointments"));
         setDoctors(cur("doctors"));
+        setSpecialties(cur("specialties"));
         setPatients(cur("patients"));
         setUsers(cur("users"));
         setReports(cur("reports"));
@@ -45,6 +47,6 @@ export const LateralMenu = (props: LateralMenuProps) => {
             <TabLink href={resolveLocalUrl("/doctors")} active={doctors}><Stethoscope className="h-4 w-4"/>Médicos</TabLink>
             <TabLink href={resolveLocalUrl("/patients")} active={patients}><NotebookTabs className="h-4 w-4"/>Pacientes</TabLink>
             <TabLink href={resolveLocalUrl("/users")} active={users}><Users className="h-4 w-4"/>Usuarios</TabLink>
-            <TabLink href={resolveLocalUrl("/reports")} active={reports}><ChartColumn className="h-4 w-4"/>Reportes</TabLink>
+            <TabLink href={resolveLocalUrl("/specialties")} active={specialties}><BriefcaseMedical className="h-4 w-4"/>Especialidades</TabLink>
         </nav>);
 };
