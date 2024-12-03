@@ -21,9 +21,6 @@ import {DatePicker} from "src/components/form/DatePicker";
 import {IPatientUpdateRequest, Patient} from "../../../../entity/patients";
 
 const formSchema = z.object({
-    sex: z.string().refine(x => x==='M' || x==='F', {
-        message: "Ingrese un valor válido. "
-    }),
     address: z.string().min(1, { message: "Ingrese una dirección válida. " }),
     localty: z.string().min(1, { message: "Ingrese una localidad válida. " }),
     province: z.string().min(1, { message: "Ingrese una provincia válida. " }),
