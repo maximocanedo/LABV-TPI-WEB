@@ -39,6 +39,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger
 } from './components/ui/dropdown-menu';
+import { HomePage } from './components/page/HomePage';
 
 export type CurrentUser = User | null | "loading";
 
@@ -90,7 +91,7 @@ const App: React.FC = () => {
                 <div className="flex flex-col">
                     <Routes>
 
-                        <Route path={"/"} element={<></>}/>
+                        <Route path={"/"} element={<HomePage />}/>
                         <Route path={"/signup"} element={<SignupPage />} />
 
                         <Route path={"/users"} element={<MainUserPage />}/>

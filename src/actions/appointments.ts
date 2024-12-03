@@ -11,6 +11,9 @@ import {
 import {IdentifiableDoctor} from "../entity/doctors";
 import {IdentifiablePatient} from "../entity/patients";
 import App from "../App";
+import { DateRange } from 'react-day-picker';
+import {Specialty} from "../entity/specialties";
+import {SpanishMonth} from "../components/page/widgets/ReportCountApposBySpecialty";
 //import * as db from './../store/appointment.';
 /// <reference path="../types/entities.js" />
 
@@ -183,7 +186,15 @@ export const getAvailableSchedules = async (doctorFile: number, date: Date): Pro
         .then(schedule => schedule.map((z: string[]) => z.map((zz: string) => ('0' + zz).slice(-2)).join(":")))
         .catch(console.error);
 };
-// @ts-ignore
-window.getAvailableDates = getAvailableDates;
-// @ts-ignore
-window.getAvailableSchedules = getAvailableSchedules;
+
+export const countAppointmentsInRange = async (status: AppointmentStatus, date: DateRange): Promise<Record<string, number>> => {
+    return u.post(`reports/countAppointmentsByDayBetweenDates?status=${status}&startDate=${new Date(date.from??Date.now()).toISOString().slice(0, 10)}&endDate=${new Date(date.to??Date.now()).toISOString().slice(0, 10)}`)
+        .then(response => response.json())
+        .catch(console.error);
+};
+
+export const countAppointmentsBySpecialtyMonthByMonth = async (specialty: Specialty): Promise<Record<SpanishMonth, number>> => {
+    return u.post(`reports/countAppointmentsBySpecialtyMonthByMonth?specialty=${specialty.id}`)
+        .then(response => response.json())
+        .catch(console.error);
+};
