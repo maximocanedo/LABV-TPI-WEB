@@ -1,14 +1,10 @@
 'use strict';
 
-import {DoctorUpdateRequest, IDoctor} from "src/entity/doctors";
 import {Card, CardContent, CardHeader} from "../../../ui/card";
-import {KeyValueList} from "../../../containers/page-tools/KeyValueList";
-import {KeyValueRow} from "../../../containers/page-tools/KeyValueRow";
 import React, {useContext, useState} from "react";
 import {Button} from "../../../ui/button";
-import {CalendarCheck, Pencil, X} from "lucide-react";
+import {CalendarCheck, X} from "lucide-react";
 import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "../../../ui/form";
-import {Input} from "../../../ui/input";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -17,17 +13,13 @@ import {useToast} from "../../../ui/use-toast";
 import {Spinner} from "../../../form/Spinner";
 import {useCurrentUser} from "../../../users/CurrentUserContext";
 import {Permits} from "../../../../entity/users";
-import {IPatient, IPatientUpdateRequest} from "../../../../entity/patients";
-import {CurrentPatientContext} from "../../patients/CurrentPatientContext";
 import {CurrentAppointmentContext} from "../CurrentAppointmentContext";
 import {Textarea} from "../../../ui/textarea";
 
 export interface CloseCardProps { }
 
 const formSchema = z.object({
-    remarks: z.string().min(1, {
-        message: "El nombre no puede estar vacío. "
-    })
+    remarks: z.string()
 });
 
 
