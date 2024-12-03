@@ -181,7 +181,7 @@ export const AppointPage = ({}: AppointPageProps) => {
                             <FormLabel>Médico</FormLabel>
                             <FormControl>
                                 { /** @ts-ignore */}
-                                <DoctorButtonSelector disabled={field.disabled} specialty={specialty} value={doctor} onChange={setDoctor} filterByUnassigned={false} nullable={false} />
+                                <DoctorButtonSelector disabled={field.disabled || !specialty} specialty={specialty} value={doctor} onChange={setDoctor} filterByUnassigned={false} nullable={false} />
                             </FormControl>
                             <FormMessage/>
                         </FormItem>)}

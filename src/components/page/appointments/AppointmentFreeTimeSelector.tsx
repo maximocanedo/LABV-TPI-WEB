@@ -68,15 +68,15 @@ export const AppointmentFreeTimeSelector
     }, [state.selectedHour, onChange]);
 
     useEffect((): void => {
-        if(state.list.length == 0) {
+        if((state.list??[]).length == 0) {
             onChange(undefined);
             dispatch({ type: "RESET" });
         }
-    }, [ state.list.length ]);
+    }, [ (state.list??[]).length ]);
 
     return (
         <Select
-            disabled={ (disabled?? false) || state.loading || state.list.length === 0 }
+            disabled={ (disabled?? false) || state.loading || (state.list??[]).length === 0 }
             onValueChange={(valueStr: string): void => {
                 dispatch({
                     type: "SET_SELECTED_TIME",
@@ -97,7 +97,7 @@ export const AppointmentFreeTimeSelector
                             state.loading
                                 ? "Buscando horarios disponibles"
                                 : (
-                                    state.list.length == 0
+                                    (state.list??[]).length == 0
                                         ? "No hay horarios disponibles"
                                         : (
                                             (state.selectedHour !== undefined)
@@ -112,7 +112,7 @@ export const AppointmentFreeTimeSelector
             <SelectContent>
                 <SelectGroup>
                     <SelectLabel>Horarios disponibles</SelectLabel>
-                    {state.list.length > 0 && state.list.map(schedule => (
+                    {(state.list??[]).length > 0 && state.list.map(schedule => (
                         <SelectItem value={schedule?? ""} key={schedule}>
                             {schedule}
                         </SelectItem>
