@@ -35,6 +35,9 @@ import {PaginatorButton} from "../../buttons/commons/PaginatorButton";
 import {AppointmentMinimalView, AppointmentStatus} from "../../../entity/appointments";
 import {IDoctor} from "../../../entity/doctors";
 import {AppointmentListComponent} from "./AppointmentListComponent";
+import {AppointmentStatusFilterControl} from "../../buttons/commons/filterRow/AppointmentStatusFilterControl";
+import {DoctorLittleButtonSelector} from "../../dialog-selectors/doctors/DoctorLittleButtonSelector";
+import {PatientLittleButtonSelector} from "../../dialog-selectors/patients/PatientLittleButtonSelector";
 
 export interface AppointmentsProps {}
 
@@ -42,7 +45,7 @@ export const Appointments = ({}: AppointmentsProps) => {
     const { me } = useCurrentUser();
     const navigate = useNavigate();
     const { appointments: history } = useLocalHistory();
-    const [viewMode, setViewMode] = useState<ViewMode>(ViewMode.COMFY);
+    const [viewMode, setViewMode] = useState<ViewMode>(ViewMode.TABLE);
 
     const [queryText, setQueryText] = useState<string>("");
     const [status, setStatus] = useState<FilterStatus>(FilterStatus.ONLY_ACTIVE);
@@ -51,6 +54,7 @@ export const Appointments = ({}: AppointmentsProps) => {
     const [ limit, setLimit ] = useState<Date | null>(null);
     const [ patient, setPatient ] = useState<IPatient | null>(null);
     const [ doctor, setDoctor ] = useState<IDoctor | null>(null);
+    const [ showFilterSpace, setShowFilterSpace ] = useState<boolean>(true);
 
     const [records, dispatcher] = useReducer(useListingBasicReducer<AppointmentMinimalView>, []);
     const [loading, setLoading] = useState<boolean>(true);
@@ -99,7 +103,7 @@ export const Appointments = ({}: AppointmentsProps) => {
     }
     useEffect(() => {
         search();
-    }, [queryText, status]);
+    }, [queryText, status, appoStatus, doctor, patient]);
 
 
     return <>
@@ -135,14 +139,20 @@ export const Appointments = ({}: AppointmentsProps) => {
                 </Accordion>
             </div>}
             <SearchPageFilterRow>
-                <ViewModeControl defValue={viewMode} onChange={setViewMode}/>
                 <StatusFilterControl value={status} disabled={false} onChange={setStatus}/>
+                <AppointmentStatusFilterControl value={appoStatus} onChange={setAppoStatus} disabled={false} />
+                <DoctorLittleButtonSelector value={doctor} onChange={setDoctor} />
+                <PatientLittleButtonSelector value={patient} onChange={setPatient} />
                 <RefreshButton loading={loading} len={records.length} handler={refresh} />
                 <ExportButton handler={(): void => {}} />
                 <CreateButton onClick={(): void => {
                     navigate(resolveLocalUrl("/appointments/new"))
                 }} mustHave={[Permits.CREATE_APPOINTMENT]} />
             </SearchPageFilterRow>
+            {showFilterSpace && <SearchPageFilterRow>
+                Filtrar por fecha o rango de fechas
+                
+            </SearchPageFilterRow>}
             {records.length === 0 && !loading && <RegularErrorPage path={""} message={"No se encontraron resultados"} description={"Intentá ajustando los filtros o cambiando el texto de la consulta. "} retry={search} /> }
             {(loading || records.length > 0) &&
                 <div className={"overflow-y-visible"}>
