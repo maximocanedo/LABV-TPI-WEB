@@ -1,7 +1,6 @@
 'use strict';
 
 import {Header} from "../commons/Header";
-import {UserCommandQuery} from "../../commands/UserCommandQuery";
 import React, {useEffect, useReducer, useState} from "react";
 import {PageContent} from "../commons/PageContent";
 import {
@@ -12,22 +11,19 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator
 } from "../../ui/breadcrumb";
-import {Tabs} from "../../ui/tabs";
 import {ViewMode, ViewModeControl} from "../../buttons/ViewModeControl";
 import {StatusFilterControl} from "../../buttons/StatusFilterControl";
 import {FilterStatus} from "../../../actions/commons";
 import {useCurrentUser} from "../../users/CurrentUserContext";
-import {IUser, Permits} from "../../../entity/users";
+import {Permits} from "../../../entity/users";
 import {SpecialtyCommandQuery} from "../../commands/SpecialtyCommandQuery";
 import * as specialties from "../../../actions/specialties";
 import {Specialty} from "../../../entity/specialties";
 import {Button} from "../../ui/button";
-import {CloudDownload, Plus, RefreshCcw} from "lucide-react";
-import {Spinner} from "../../form/Spinner";
+import {Plus} from "lucide-react";
 import {RegularErrorPage} from "../commons/RegularErrorPage";
 import {resolveLocalUrl} from "../../../auth";
-import {UserListComponent} from "../../users/UserListComponent";
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {SpecialtyListComponent} from "./SpecialtyListComponent";
 import {SearchPageFilterRow} from "../../containers/commons/SearchPageFilterRow";
 import {RefreshButton} from "../../buttons/commons/filterRow/RefreshButton";
@@ -131,7 +127,7 @@ export const MainSpecialtyPage = (props: MainSpecialtyPageProps) => {
                 <ViewModeControl defValue={viewMode} onChange={setViewMode}/>
                 <StatusFilterControl disabled={!canFilter} value={status} onChange={setStatus}/>
                 <RefreshButton len={results.length} loading={loading} handler={() => search()} />
-                <ExportButton handler={(): void => {}} />
+                <ExportButton records={results} />
                 <CreateButton onClick={(): void => {
                     navigate(resolveLocalUrl("/specialties/new"))
                 }} mustHave={[Permits.CREATE_SPECIALTY]} />

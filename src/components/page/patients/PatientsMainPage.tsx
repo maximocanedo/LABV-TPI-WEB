@@ -1,8 +1,7 @@
 'use strict';
 
-import { useCurrentUser } from "src/components/users/CurrentUserContext";
+import {useCurrentUser} from "src/components/users/CurrentUserContext";
 import {Header} from "../commons/Header";
-import {DoctorCommandQuery} from "../../commands/DoctorCommandQuery";
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -18,19 +17,15 @@ import {useNavigate} from "react-router";
 import {ViewMode, ViewModeControl} from "../../buttons/ViewModeControl";
 import {FilterStatus} from "../../../actions/commons";
 import {useDispatchers, useListingBasicReducer} from "../../../actions/redux.utils";
-import {DoctorMinimalView} from "../../../entity/doctors";
-import {PatientCommunicationView, PatientMinimalView} from "../../../entity/patients";
+import {PatientCommunicationView} from "../../../entity/patients";
 import * as patients from "../../../actions/patients";
-import {DoctorQueryCleaned, PatientQueryCleaned} from "../../../actions/query.utils";
+import {PatientQueryCleaned} from "../../../actions/query.utils";
 import {PatientCommandQuery} from "../../commands/PatientCommandQuery";
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "../../ui/accordion";
-import {DoctorListComponent} from "../../doctors/DoctorListComponent";
 import {resolveLocalUrl} from "../../../auth";
-import { PatientListComponent } from "src/components/patients/PatientListComponent";
+import {PatientListComponent} from "src/components/patients/PatientListComponent";
 import {SearchPageFilterRow} from "../../containers/commons/SearchPageFilterRow";
 import {StatusFilterControl} from "../../buttons/StatusFilterControl";
-import {WeekdayControl} from "../../buttons/WeekdayControl";
-import {SpecialtyFilterSelector} from "../../dialog-selectors/specialty/SpecialtyFilterSelector";
 import {RefreshButton} from "../../buttons/commons/filterRow/RefreshButton";
 import {ExportButton} from "../../buttons/commons/filterRow/ExportButton";
 import {CreateButton} from "../../buttons/commons/filterRow/CreateButton";
@@ -126,7 +121,7 @@ export const PatientsMainPage = ({}: PatientsMainPageProps) => {
                 <ViewModeControl defValue={viewMode} onChange={setViewMode}/>
                 <StatusFilterControl value={status} disabled={false} onChange={setStatus}/>
                 <RefreshButton loading={loading} len={records.length} handler={refresh} />
-                <ExportButton handler={(): void => {}} />
+                <ExportButton records={records} />
                 <CreateButton onClick={(): void => {
                     navigate(resolveLocalUrl("/patients/new"))
                 }} mustHave={[Permits.CREATE_PATIENT]} />

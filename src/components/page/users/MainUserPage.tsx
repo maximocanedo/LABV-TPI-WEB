@@ -1,7 +1,6 @@
 'use strict';
 
 import {Header} from "../commons/Header";
-import {CloudDownload, ListFilter, Plus, RefreshCcw} from "lucide-react";
 import {PageContent} from "../commons/PageContent";
 import * as users from "../../../actions/users";
 import React, {useEffect, useReducer, useState} from "react";
@@ -18,14 +17,11 @@ import {IUser, Permits} from "../../../entity/users";
 import {useCurrentUser} from "../../users/CurrentUserContext";
 import {StatusFilterControl} from "../../buttons/StatusFilterControl";
 import {UserCommandQuery} from "../../commands/UserCommandQuery";
-import {Button} from "../../ui/button";
-import {Tabs} from "../../ui/tabs";
 import {ViewMode, ViewModeControl} from "../../buttons/ViewModeControl";
 import {UserListComponent} from "../../users/UserListComponent";
 import {useNavigate} from "react-router";
 import {resolveLocalUrl} from "../../../auth";
 import {RegularErrorPage} from "../commons/RegularErrorPage";
-import {Spinner} from "../../form/Spinner";
 import {useLocalHistory} from "../../local/LocalHistoryContext";
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "../../ui/accordion";
 import {SearchPageFilterRow} from "../../containers/commons/SearchPageFilterRow";
@@ -160,7 +156,7 @@ export const MainUserPage = (props: MainUserPageProps) => {
                 <ViewModeControl defValue={viewMode} onChange={setViewMode}/>
                 <StatusFilterControl disabled={!canFilter} value={status} onChange={setStatus}/>
                 <RefreshButton len={results.length} loading={loading} handler={() => refresh()} />
-                <ExportButton handler={(): void => {}} />
+                <ExportButton records={results} />
             </SearchPageFilterRow>
             {(loading || results.length > 0) && <div className={"overflow-visible --force-overflow-visible"}>
                     <UserListComponent viewMode={viewMode} loading={loading} items={results} onClick={(user) => {

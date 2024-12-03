@@ -151,7 +151,7 @@ export const Appointments = ({}: AppointmentsProps) => {
                 <PatientLittleButtonSelector value={patient} onChange={setPatient} />
                 <DateRangeFilterButton date={date} setDate={setDate} />
                 <RefreshButton loading={loading} len={records.length} handler={refresh} />
-                <ExportButton handler={(): void => {}} />
+                <ExportButton records={records} handler={(): void => {}} />
                 <CreateButton onClick={(): void => {
                     navigate(resolveLocalUrl("/appointments/new"))
                 }} mustHave={[Permits.CREATE_APPOINTMENT]} />

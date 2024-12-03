@@ -48,6 +48,7 @@
     "embla-carousel-react": "^8.1.7",
     "google-libphonenumber": "^3.2.38",
     "input-otp": "^1.2.4",
+    "js-yaml": "^4.1.0",
     "lucide-react": "^0.416.0",
     "next-themes": "^0.3.0",
     "npx": "^10.2.2",
@@ -66,11 +67,14 @@
     "tailwindcss": "^3.4.7",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.1",
+    "xlsx": "^0.18.5",
     "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/google-libphonenumber": "^7.4.30",
-    "@types/react": "^18.3.3"
+    "@types/js-yaml": "^4.0.9",
+    "@types/react": "^18.3.3",
+    "@types/xlsx": "^0.0.36"
   },
   "browserslist": {
     "production": [

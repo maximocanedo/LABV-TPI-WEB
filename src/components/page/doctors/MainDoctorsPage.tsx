@@ -18,13 +18,8 @@ import {FilterStatus} from "../../../actions/commons";
 import {DoctorMinimalView, weekday} from "../../../entity/doctors";
 import {Specialty} from "../../../entity/specialties";
 import {StatusFilterControl} from "../../buttons/StatusFilterControl";
-import {Tabs} from "../../ui/tabs";
 import {ViewMode, ViewModeControl} from "../../buttons/ViewModeControl";
-import {Button} from "../../ui/button";
-import {CloudDownload, RefreshCcw} from "lucide-react";
-import {Spinner} from "../../form/Spinner";
 import {WeekdayControl} from "../../buttons/WeekdayControl";
-import {SpecialtySelector} from "../../dialog-selectors/specialty/SpecialtySelector";
 import {SpecialtyFilterSelector} from "../../dialog-selectors/specialty/SpecialtyFilterSelector";
 import {DoctorListComponent} from "../../doctors/DoctorListComponent";
 import {useDispatchers, useListingBasicReducer} from "../../../actions/redux.utils";
@@ -35,10 +30,9 @@ import {RegularErrorPage} from "../commons/RegularErrorPage";
 import {PaginatorButton} from "../../buttons/commons/PaginatorButton";
 import {useNavigate} from "react-router";
 import {resolveLocalUrl} from "../../../auth";
-import { useLocalHistory } from "src/components/local/LocalHistoryContext";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "src/components/ui/accordion";
-import { UserSelector } from "src/components/dialog-selectors/users/UserSelector";
-import {IUser, Permits} from "src/entity/users";
+import {useLocalHistory} from "src/components/local/LocalHistoryContext";
+import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "src/components/ui/accordion";
+import {Permits} from "src/entity/users";
 import {CreateButton} from "../../buttons/commons/filterRow/CreateButton";
 
 export interface MainDoctorsPageProps {
@@ -145,7 +139,7 @@ export const MainDoctorsPage = (props: MainDoctorsPageProps) => {
                 <WeekdayControl value={day} disabled={false} onChange={setDay} />
                 <SpecialtyFilterSelector value={specialty} onChange={setSpecialty} />
                 <RefreshButton loading={loading} len={records.length} handler={refresh} />
-                <ExportButton handler={(): void => {}} />
+                <ExportButton records={records} />
                 <CreateButton onClick={(): void => {
                     navigate(resolveLocalUrl("/doctors/new"))
                 }} mustHave={[Permits.CREATE_DOCTOR]} />
