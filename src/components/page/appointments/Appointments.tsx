@@ -41,6 +41,7 @@ import {PatientLittleButtonSelector} from "../../dialog-selectors/patients/Patie
 import {DateRangeFilterButton} from "../../buttons/DateRangeFilterButton";
 import {addDays} from "date-fns";
 import {DateRange} from "react-day-picker";
+import {AppointmentCommandQuery} from "../../commands/AppointmentCommandQuery";
 
 export interface AppointmentsProps {}
 
@@ -113,7 +114,7 @@ export const Appointments = ({}: AppointmentsProps) => {
 
     return <>
         <Header>
-            <PatientCommandQuery onSearch={search}/>
+            <AppointmentCommandQuery onSearch={search}/>
         </Header>
         <PageContent>
             <Breadcrumb>
