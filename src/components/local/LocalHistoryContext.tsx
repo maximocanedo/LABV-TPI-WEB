@@ -71,7 +71,10 @@ const identifiableReducer = <T extends Identifiable>(state: T[], action: { type:
 
 const reduce = <T extends Identifiable>(red: Dispatch<{ type: ActionType; payload: T | null; }>) => {
     return {
-        log: (payload: T) => red({ type: ActionType.LOG, payload }),
+        log: (payload: T) => {
+            if(payload === undefined && payload == null) return;
+            else red({type: ActionType.LOG, payload});
+        },
         clear: () => red({ type: ActionType.CLEAR, payload: null }),
         rem: (payload: T) => red({ type: ActionType.LOG, payload })
     };

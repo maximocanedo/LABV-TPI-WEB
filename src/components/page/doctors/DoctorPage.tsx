@@ -47,7 +47,7 @@ export const DoctorPage = ({  }: DoctorPageProps) => {
     const file: number = extractNumbers(rawFile);
 
     useEffect(() => {
-        if(record != null) log(record);
+        if(record != null && !("error" in record)) log(record);
         console.log(history);
     }, [ record ]);
 
@@ -57,7 +57,7 @@ export const DoctorPage = ({  }: DoctorPageProps) => {
         setLoading(true);
         data.findByFile(file)
             .then(record => {
-                if(!record) setRecord(null);
+                if(!record || ("message" in record)) setRecord(null);
                 else setRecord(record);
                 return;
             })

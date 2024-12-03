@@ -63,7 +63,7 @@ export const UserProfilePage = (props: UserProfilePageProps) => {
     useEffect(refresh, [ username ]);
 
     useEffect(() => {
-        if(user != null) log(user);
+        if(user != null && !("error" in user)) log(user);
         console.log(history);
     }, [ user ]);
 

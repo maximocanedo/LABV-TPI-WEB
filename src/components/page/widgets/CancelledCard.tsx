@@ -4,8 +4,10 @@ import {useEffect, useState} from "react";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "../../ui/card";
 import {Input} from "../../ui/input";
 import {Spinner} from "../../form/Spinner";
+import {useCurrentUser} from "../../users/CurrentUserContext";
 
 export const CancelledCard = () => {
+    const { me } = useCurrentUser();
     const def: YearBetween1900And2099 = new Date().getFullYear()+"" as YearBetween1900And2099;
     const [ year, setYear ] = useState<YearBetween1900And2099>(def);
     const [ loading, setLoading ] = useState<boolean>(true);
@@ -17,14 +19,17 @@ export const CancelledCard = () => {
             .then((x) => {
                 setCount(x + "");
             })
-            .catch(console.error)
+            .catch(() => {
+                setTimeout(() => {
+                    refresh()
+                },3000);
+            })
             .finally(() => {setLoading(false); });
     };
 
     useEffect(refresh, [ year ])
 
-
-    return <Card className={"card"}>
+    return <Card className={"card "}>
         <CardHeader>
             <CardTitle>Turnos cancelados</CardTitle>
             <CardDescription>En el año {year}. </CardDescription>

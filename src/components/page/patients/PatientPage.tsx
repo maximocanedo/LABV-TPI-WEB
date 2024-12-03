@@ -44,7 +44,8 @@ export const PatientPage = ({}: PatientPageProps) => {
         = useState<boolean>(true);
 
     useEffect(() => {
-        if(record != null) patients.log(record);
+        console.log(record);
+        if(record != null && !("error" in record)) patients.log(record);
     }, [ record ]);
 
     const refresh = () => {

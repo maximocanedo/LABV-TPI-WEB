@@ -28,7 +28,7 @@ export const HomePage = ({}: HomePageProps) => {
         <Header>
         </Header>
 
-        {me != null && me !== "loading" ? (<PageContent className={" px-0 "}>
+        {(<PageContent className={" px-0 "}>
             <h1 className={"py-3 text-2xl font-bold"}>{greeting}</h1>
             <div className={"flex flex-row gap-x-2 px-0 sm:px-0 items-start"}>
                 <div className={"flex-1 basis-1/3"}>
@@ -45,10 +45,7 @@ export const HomePage = ({}: HomePageProps) => {
             <DoctorsCard/>
             <PatientsCard/>
             <SpeCard />
-        </PageContent>) : <PageContent>
-            <h1 className={"py-3 text-2xl font-bold"}>No iniciaste sesión. </h1>
-            <p>Iniciá sesión para continuar. </p>
-        </PageContent>}
+        </PageContent>)}
 
     </>;
 };

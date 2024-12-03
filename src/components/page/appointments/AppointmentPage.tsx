@@ -56,7 +56,7 @@ export const AppointmentPage = ({}: AppointmentPageProps) => {
         = useState<boolean>(true);
 
     useEffect(() => {
-        if(record != null) appointments.log(record);
+        if(record != null && !("error" in record)) appointments.log(record);
     }, [ record ]);
 
     const refresh = () => {

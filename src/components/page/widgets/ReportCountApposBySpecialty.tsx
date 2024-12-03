@@ -13,6 +13,7 @@ import {CartesianGrid, Line, LineChart, XAxis, YAxis} from "recharts";
 import {Specialty} from "../../../entity/specialties";
 import {SpecialtyButtonSelector} from "../../dialog-selectors/specialty/SpecialtyButtonSelector";
 import {Spinner} from "src/components/form/Spinner";
+import {useCurrentUser} from "../../users/CurrentUserContext";
 
 export interface ReportCountApposBySpecialtyProps {}
 
@@ -32,6 +33,7 @@ const months: SpanishMonth[] = [
 type ChartData = Array<{ month: SpanishMonth; TOTAL: number }>;
 
 export const ReportCountApposBySpecialty = ({}: ReportCountApposBySpecialtyProps) => {
+    const { me } = useCurrentUser();
     const [loading, setLoading] = useState<boolean>(false);
     const [specialty, setSpecialty] = useState<Specialty | null>(null);
     const [chartData, setChartData] = useState<ChartData>([]);

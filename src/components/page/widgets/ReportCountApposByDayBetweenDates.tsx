@@ -17,6 +17,7 @@ import {
 import {Bar, BarChart, CartesianGrid, XAxis} from "recharts";
 import {DatePickerWithRange} from "./DatePickerWithRange";
 import { Spinner } from "src/components/form/Spinner";
+import {useCurrentUser} from "../../users/CurrentUserContext";
 
 export interface ReportCountApposByDayBetweenDatesProps {}
 
@@ -43,6 +44,7 @@ type Result = Record<string, number>;
 type ChartData = Array<{ day: string } & Partial<Record<AppointmentStatus, number>>>;
 
 export const ReportCountApposByDayBetweenDates = ({}: ReportCountApposByDayBetweenDatesProps) => {
+    const { me } = useCurrentUser();
     const [loading, setLoading] = useState<boolean>(false);
     const [range, setRange] = useState<DateRange>({
         from: subDays(new Date(), 14),
@@ -70,6 +72,9 @@ export const ReportCountApposByDayBetweenDates = ({}: ReportCountApposByDayBetwe
             setChartData(combinedData);
         } catch (error) {
             console.error("Error fetching data:", error);
+            setTimeout(() => {
+                refresh()
+            },3000);
         } finally {
             setLoading(false);
         }
@@ -78,6 +83,7 @@ export const ReportCountApposByDayBetweenDates = ({}: ReportCountApposByDayBetwe
     useEffect(() => {
         refresh();
     }, [range]);
+
 
     return (
         <Card className={"card max-h-[330px]"}>
