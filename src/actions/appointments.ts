@@ -103,8 +103,8 @@ export class Query extends GenericQuery<AppointmentMinimalView> {
         return {
             ...super.getParams(),
             appointmentStatus: this.#appointmentStatus,
-            date: this.#date,
-            limit: this.#limit,
+            date: !this.#date ? null : new Date(this.#date).toISOString(),
+            limit: !this.#limit ? null : new Date(this.#limit).toISOString(),
             ...(this.#doctor && {
                 doctorId: this.#doctor.id,
                 doctorFile: this.#doctor.file,

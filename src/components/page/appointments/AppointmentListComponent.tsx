@@ -37,11 +37,10 @@ export const AppointmentListComponent = ({ viewMode, items, onClick, loading, cl
         <TableHeader>
             <TableRow>
                 <TableHead className={"w-[70px] text-center"}>Id</TableHead>
-                <TableHead>{ whenTable && "Nombre completo" }</TableHead>
-                { whenTable && <TableHead>D.N.I. N.º</TableHead> }
-                {whenTable && items.length > 0 && "email" in items[0] && <TableHead>Correo electrónico</TableHead>}
-                {whenTable && items.length > 0 && "phone" in items[0] && <TableHead>Número de teléfono</TableHead>}
-                { (whenTable && canFilterByStatus) && <TableHead>Estado</TableHead> }
+                <TableHead>Doctor</TableHead>
+                <TableHead>Paciente</TableHead>
+                <TableHead>Estado</TableHead>
+                <TableHead>Fecha y hora</TableHead>
             </TableRow>
         </TableHeader>
         <TableBody>

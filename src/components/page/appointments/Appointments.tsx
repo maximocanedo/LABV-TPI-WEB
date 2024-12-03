@@ -38,6 +38,9 @@ import {AppointmentListComponent} from "./AppointmentListComponent";
 import {AppointmentStatusFilterControl} from "../../buttons/commons/filterRow/AppointmentStatusFilterControl";
 import {DoctorLittleButtonSelector} from "../../dialog-selectors/doctors/DoctorLittleButtonSelector";
 import {PatientLittleButtonSelector} from "../../dialog-selectors/patients/PatientLittleButtonSelector";
+import {DateRangeFilterButton} from "../../buttons/DateRangeFilterButton";
+import {addDays} from "date-fns";
+import {DateRange} from "react-day-picker";
 
 export interface AppointmentsProps {}
 
@@ -50,8 +53,10 @@ export const Appointments = ({}: AppointmentsProps) => {
     const [queryText, setQueryText] = useState<string>("");
     const [status, setStatus] = useState<FilterStatus>(FilterStatus.ONLY_ACTIVE);
     const [appoStatus, setAppoStatus] = useState<AppointmentStatus | null>(null);
-    const [ date, setDate ] = useState<Date | null>(null);
-    const [ limit, setLimit ] = useState<Date | null>(null);
+    const [ date, setDate ] = useState<DateRange>({
+        from: undefined, //new Date(2022, 0, 20),
+        to: undefined // addDays(new Date(2022, 0, 20), 20),
+    });
     const [ patient, setPatient ] = useState<IPatient | null>(null);
     const [ doctor, setDoctor ] = useState<IDoctor | null>(null);
     const [ showFilterSpace, setShowFilterSpace ] = useState<boolean>(true);
@@ -66,8 +71,8 @@ export const Appointments = ({}: AppointmentsProps) => {
             .filterByStatus(status);
         if(appoStatus) x = x.filterByAppointmentStatus(appoStatus);
         if(date) {
-            if(limit) x = x.filterByDateBetween(date, limit);
-            else x = x.filterByDate(date);
+            if(date.to) x = x.filterByDateBetween(date.from?? null, date.to);
+            else x = x.filterByDate(date.from?? null);
         }
         if(patient) x = x.filterByPatient(patient);
         if(doctor) x = x.filterByDoctor(doctor)
@@ -103,7 +108,7 @@ export const Appointments = ({}: AppointmentsProps) => {
     }
     useEffect(() => {
         search();
-    }, [queryText, status, appoStatus, doctor, patient]);
+    }, [queryText, status, appoStatus, doctor, patient, date]);
 
 
     return <>
@@ -143,16 +148,13 @@ export const Appointments = ({}: AppointmentsProps) => {
                 <AppointmentStatusFilterControl value={appoStatus} onChange={setAppoStatus} disabled={false} />
                 <DoctorLittleButtonSelector value={doctor} onChange={setDoctor} />
                 <PatientLittleButtonSelector value={patient} onChange={setPatient} />
+                <DateRangeFilterButton date={date} setDate={setDate} />
                 <RefreshButton loading={loading} len={records.length} handler={refresh} />
                 <ExportButton handler={(): void => {}} />
                 <CreateButton onClick={(): void => {
                     navigate(resolveLocalUrl("/appointments/new"))
                 }} mustHave={[Permits.CREATE_APPOINTMENT]} />
             </SearchPageFilterRow>
-            {showFilterSpace && <SearchPageFilterRow>
-                Filtrar por fecha o rango de fechas
-                
-            </SearchPageFilterRow>}
             {records.length === 0 && !loading && <RegularErrorPage path={""} message={"No se encontraron resultados"} description={"Intentá ajustando los filtros o cambiando el texto de la consulta. "} retry={search} /> }
             {(loading || records.length > 0) &&
                 <div className={"overflow-y-visible"}>

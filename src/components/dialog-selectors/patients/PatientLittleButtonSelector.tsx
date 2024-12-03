@@ -21,7 +21,7 @@ export const PatientLittleButtonSelector = ({value, onChange, disabled, classNam
     const [ open, setOpen ] = useState<boolean>(false);
 
     return (
-        <PatientSelector nullable={nullable?? false} value={value} onChange={x => {
+        <PatientSelector nullable={nullable?? true} value={value} onChange={x => {
             onChange(x);
         }} open={open} onOpenChange={setOpen}>
             <Button disabled={disabled} variant="outline" size="sm" className="h-7 gap-1 max-w-full text-sm">

@@ -1,7 +1,7 @@
 'use strict';
 
 import {Calendar, UserRound} from "lucide-react";
-import {AppointmentMinimalView, IAppointment} from "../../../entity/appointments";
+import {AppointmentMinimalView, AppointmentStatus, IAppointment} from "../../../entity/appointments";
 import {ViewMode} from "../../buttons/ViewModeControl";
 import {TableCell, TableRow} from "../../ui/table";
 import {Skeleton} from "../../ui/skeleton";
@@ -56,6 +56,12 @@ export const AppointmentListItem = ({record, isLoading, viewMode, onClick, class
 
         </TableRow>);
     }
+    const opt: Record<AppointmentStatus, string> = {
+        "PENDING": "Pendiente",
+        "CANCELLED": "Cancelado",
+        "ABSENT": "Ausente",
+        "PRESENT": "Presente"
+    };
     if (!record) return <></>;
     const fullNameArr: string = printDate(record.date);
     if (viewMode == ViewMode.LITTLE_CARDS) {
@@ -68,11 +74,11 @@ export const AppointmentListItem = ({record, isLoading, viewMode, onClick, class
                     <LocalAppointmentContextMenu patient={record}><div
                         className={"text-sm font-medium text-gray-900 truncate dark:text-white hover:underline cursor-pointer"}
                         onClick={() => onClick(record)}>
-                        {fullNameArr}{(!record.active) &&
+                        {`#${record.id} · Dr. ${record.assignedDoctor.surname}`}{(!record.active) &&
                         <Badge variant={"outline"} className={"ml-2"}>Deshabilitado</Badge>}
                     </div>
                     <div className={"text-sm font-medium text-gray-500 truncate dark:text-white"}>
-                        {`Turno #${record.id}`}
+                        {`${fullNameArr}`}
                     </div></LocalAppointmentContextMenu>
                 </TableCell>
             </TableRow>
@@ -97,15 +103,19 @@ export const AppointmentListItem = ({record, isLoading, viewMode, onClick, class
                 </div>
             </TableCell>}
             {viewMode === ViewMode.TABLE && <TableCell>
-
-                <LocalAppointmentContextMenu patient={record}>
                     <div className={"text-sm font-medium text-gray-900 truncate dark:text-white hover:underline cursor-pointer"}
                      onClick={() => onClick(record)}>
-                    {fullNameArr}
-                    </div></LocalAppointmentContextMenu>
+                    {`Dr. ${record.assignedDoctor.surname}, ${record.assignedDoctor.name}`}
+                    </div>
             </TableCell>}
-            {viewMode === ViewMode.TABLE && <TableCell>{"A1080"}</TableCell>}
-            {viewMode === ViewMode.TABLE && <TableCell>{record.active ? "Habilitado" : "Deshabilitado"}</TableCell>}
+            {viewMode === ViewMode.TABLE && <TableCell>
+                <div className={"text-sm font-medium text-gray-900 truncate dark:text-white hover:underline cursor-pointer"}
+                     onClick={() => onClick(record)}>
+                    {`${record.patient.surname}, ${record.patient.name}`}
+                </div>
+            </TableCell>}
+            {viewMode === ViewMode.TABLE && <TableCell>{opt[record.status]}</TableCell>}
+            {viewMode === ViewMode.TABLE && <TableCell>{fullNameArr}</TableCell>}
             <TableCell className={"w-[36px]"}>
                 <AppointmentMenu {...record} />
             </TableCell>
