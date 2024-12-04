@@ -26,7 +26,7 @@ const formSchema = z.object({
 export const CloseCard = ({ }: CloseCardProps) => {
     const {record, updater} = useContext(CurrentAppointmentContext);
     const { me, can } = useCurrentUser();
-    const canEdit: boolean = can(Permits.UPDATE_APPOINTMENT);
+    const canEdit: boolean = can(Permits.UPDATE_APPOINTMENT) || (me != null && me != "loading" && record != null && record.assignedDoctor?.file == me.doctor?.file);
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {

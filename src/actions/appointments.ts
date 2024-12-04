@@ -49,6 +49,7 @@ export const findById = async (id: number): Promise<IAppointment> => {
  * @extends GenericQuery<Appointment>
  */
 export class Query extends GenericQuery<AppointmentMinimalView> {
+
     #appointmentStatus: AppointmentStatus | null = null;
     #date: Date | string | null = null;
     #limit: Date | string | null = null;
